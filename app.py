@@ -33,10 +33,10 @@ except ImportError:
 
 class FinancialAgentApp:
     def __init__(self):
-        self.parser = TelegramFinancialParser('config.json')
+        self.parser = TelegramFinancialParser()
         self.transactions = []
         self.is_parsing = False
-        self.last_update = None
+        self.last_update: Optional[datetime] = None
         self.load_existing_data()
         
         # Start background parsing thread
@@ -195,11 +195,6 @@ def settings_page_no_ext():
     """Serve settings page"""
     return render_template('settings.html')
 
-@app.route('/telegram')
-def telegram_app():
-    """Serve the Telegram Mini App version"""
-    return render_template('telegram_index.html')
-
 @app.route('/api/transactions')
 def api_transactions():
     """Get all transactions"""
@@ -295,30 +290,19 @@ def api_summary():
 def api_settings_get():
     """Get current settings"""
     try:
-        config_path = Path('config.json')
-        if config_path.exists():
-            with open(config_path, 'r', encoding='utf-8') as f:
-                config = json.load(f)
-            
-            # Return safe config (without sensitive data)
-            safe_config = {
-                'currency': config.get('currency', 'RUB'),
-                'notifications': config.get('notifications', True),
-                'auto_update': config.get('auto_update', True),
-                'update_interval': config.get('update_interval', 30),
-                'group_ids': config.get('group_ids', [])
-            }
-            
-            return jsonify({
-                'success': True,
-                'data': safe_config
-            })
-        else:
-            return jsonify({
-                'success': False,
-                'error': 'Config file not found'
-            })
-    
+        # Return settings from environment variables or parser config
+        config = {
+            'currency': os.environ.get('CURRENCY', 'RUB'),
+            'notifications': os.environ.get('NOTIFICATIONS', 'true').lower() == 'true',
+            'auto_update': os.environ.get('AUTO_UPDATE', 'true').lower() == 'true',
+            'update_interval': int(os.environ.get('UPDATE_INTERVAL', '30')),
+            'group_ids': financial_app.parser.group_ids
+        }
+        
+        return jsonify({
+            'success': True,
+            'data': config
+        })
     except Exception as e:
         logger.error(f"Error in api_settings_get: {e}")
         return jsonify({
@@ -328,27 +312,17 @@ def api_settings_get():
 
 @app.route('/api/settings', methods=['POST'])
 def api_settings_post():
-    """Update settings"""
+    """Update settings - in Railway environment, this would typically be done via env vars"""
     try:
         new_settings = request.get_json()
         
-        config_path = Path('config.json')
-        if config_path.exists():
-            with open(config_path, 'r', encoding='utf-8') as f:
-                config = json.load(f)
-        else:
-            config = {}
-        
-        # Update config with new settings
-        config.update(new_settings)
-        
-        # Save updated config
-        with open(config_path, 'w', encoding='utf-8') as f:
-            json.dump(config, f, indent=4, ensure_ascii=False)
+        # In a production Railway environment, you would set these as environment variables
+        # For now, we'll just log them
+        logger.info(f"Settings update requested: {new_settings}")
         
         return jsonify({
             'success': True,
-            'message': 'Settings updated successfully'
+            'message': 'Settings update request received. In Railway environment, please set these as environment variables.'
         })
     
     except Exception as e:
@@ -432,6 +406,8 @@ def static_files(filename):
 
 def run_app(host='0.0.0.0', port=8080, debug=False):
     """Run the Flask application"""
+    # Get port from environment variable (Railway sets this)
+    port = int(os.environ.get('PORT', port))
     app.run(host=host, port=port, debug=debug)
 
 if __name__ == '__main__':
@@ -440,6 +416,9 @@ if __name__ == '__main__':
     host = '0.0.0.0'
     port = 8080
     debug = False
+    
+    # Get port from environment variable (Railway sets this)
+    port = int(os.environ.get('PORT', port))
     
     if len(sys.argv) > 1:
         port = int(sys.argv[1])
@@ -451,5 +430,10 @@ if __name__ == '__main__':
         debug = sys.argv[3].lower() == 'true'
     
     print(f"Starting Telegram Financial Agent on http://{host}:{port}")
-    print("Please ensure your config.json has valid Telegram API credentials")
+    print("Please ensure your Railway environment variables are set:")
+    print("  - API_ID")
+    print("  - API_HASH")
+    print("  - PHONE_NUMBER")
+    print("  - GROUP_IDS (comma-separated or JSON array)")
+    print("  - GROUP_TYPES (JSON object mapping group IDs to types)")
     run_app(host, port, debug)
