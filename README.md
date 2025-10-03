@@ -123,23 +123,36 @@ python server.py 8080
 2. Выберите ваш проект
 3. Перейдите в раздел "Variables"
 4. Добавьте следующие переменные:
-   - `API_ID` - ваш Telegram API ID
-   - `API_HASH` - ваш Telegram API Hash
-   - `PHONE_NUMBER` - ваш номер телефона
-   - `GROUP_IDS` - ID групп через запятую или в формате JSON массива
-   - `GROUP_TYPES` - типы групп в формате JSON объекта
-   - `CURRENCY` - валюта (по умолчанию RUB)
-   - `NOTIFICATIONS` - включить уведомления (true/false)
-   - `AUTO_UPDATE` - автоматическое обновление (true/false)
-   - `UPDATE_INTERVAL` - интервал обновления в секундах (по умолчанию 30)
 
-Пример значений переменных:
+#### Обязательные переменные:
+- `API_ID` - ваш Telegram API ID
+- `API_HASH` - ваш Telegram API Hash
+- `PHONE_NUMBER` - ваш номер телефона
+
+#### Опциональные переменные:
+- `GROUP_IDS` - ID групп через запятую или в формате JSON массива
+- `GROUP_TYPES` - типы групп в формате JSON объекта
+- `CURRENCY` - валюта (по умолчанию RUB)
+- `NOTIFICATIONS` - включить уведомления (true/false)
+- `AUTO_UPDATE` - автоматическое обновление (true/false)
+- `UPDATE_INTERVAL` - интервал обновления в секундах (по умолчанию 30)
+
+#### Пример значений переменных:
 ```
 API_ID=12345678
 API_HASH=abcdef1234567890abcdef1234567890
 PHONE_NUMBER=+79281234567
 GROUP_IDS=["-1001234567890", "-1000987654321"]
 GROUP_TYPES={"-1001234567890": "income", "-1000987654321": "expense"}
+CURRENCY=RUB
+NOTIFICATIONS=true
+AUTO_UPDATE=true
+UPDATE_INTERVAL=30
+```
+
+Вы также можете использовать скрипт для генерации инструкций:
+```bash
+python setup_railway_env.py
 ```
 
 ## 2. Развертывание в облаке
