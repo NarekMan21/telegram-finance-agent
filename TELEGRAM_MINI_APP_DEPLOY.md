@@ -48,9 +48,13 @@
 3. В терминале выполните:
    ```bash
    railway login
-   railway init
+   railway init --name telegram-finance-agent
    railway up
    ```
+
+Или используйте наши скрипты для автоматического развертывания:
+- Запустите [deploy_to_railway.bat](deploy_to_railway.bat) (Windows)
+- Или выполните `python deploy_to_railway.py` (все платформы)
 
 ## Шаг 4: Настройка конфигурации
 
