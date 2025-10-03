@@ -1,0 +1,194 @@
+2025-10-01 17:38:41,992 - parser - INFO - Configuration loaded from config.json
+2025-10-01 17:38:41,996 - parser - INFO - Configuration saved to config.json
+2025-10-01 17:43:10,693 - parser - INFO - Configuration loaded from config.json
+2025-10-01 17:43:10,695 - parser - INFO - Configuration saved to config.json
+2025-10-01 17:43:48,913 - telethon.network.mtprotosender - INFO - Connecting to 149.154.167.51:443/TcpFull...
+2025-10-01 17:43:50,171 - telethon.network.mtprotosender - INFO - Connection to 149.154.167.51:443/TcpFull complete!
+2025-10-01 17:47:12,514 - parser - INFO - Configuration loaded from config.json
+2025-10-01 17:47:12,516 - parser - INFO - Configuration saved to config.json
+2025-10-01 17:50:07,611 - __main__ - INFO - Configuration loaded from config.json
+2025-10-01 17:50:07,612 - telethon.network.mtprotosender - INFO - Connecting to 149.154.167.51:443/TcpFull...
+2025-10-01 17:50:07,613 - telethon.network.mtprotosender - INFO - Connection to 149.154.167.51:443/TcpFull complete!
+2025-10-01 17:50:32,956 - __main__ - INFO - Подключение к Telegram установлено. Наблюдение за группами...
+2025-10-01 17:53:52,328 - __main__ - INFO - Configuration loaded from config.json
+2025-10-01 17:53:52,329 - telethon.network.mtprotosender - INFO - Connecting to 149.154.167.51:443/TcpFull...
+2025-10-01 17:53:52,330 - telethon.network.mtprotosender - INFO - Connection to 149.154.167.51:443/TcpFull complete!
+2025-10-01 17:53:53,004 - __main__ - INFO - Подключение к Telegram установлено. Наблюдение за группами...
+2025-10-01 17:56:39,682 - __main__ - INFO - Configuration loaded from config.json
+2025-10-01 17:56:39,683 - telethon.network.mtprotosender - INFO - Connecting to 149.154.167.51:443/TcpFull...
+2025-10-01 17:56:39,684 - telethon.network.mtprotosender - INFO - Connection to 149.154.167.51:443/TcpFull complete!
+2025-10-01 17:56:40,185 - __main__ - INFO - Подключение к Telegram установлено. Наблюдение за группами...
+2025-10-01 18:00:00,696 - __main__ - INFO - Configuration loaded from config.json
+2025-10-01 18:00:00,697 - telethon.network.mtprotosender - INFO - Connecting to 149.154.167.51:443/TcpFull...
+2025-10-01 18:00:00,698 - telethon.network.mtprotosender - INFO - Connection to 149.154.167.51:443/TcpFull complete!
+2025-10-01 18:00:01,251 - __main__ - INFO - Подключение к Telegram установлено. Наблюдение за группами...
+2025-10-01 18:11:41,967 - __main__ - INFO - Configuration loaded from config.json
+2025-10-01 18:11:41,970 - telethon.network.mtprotosender - INFO - Connecting to 149.154.167.51:443/TcpFull...
+2025-10-01 18:11:41,975 - telethon.network.mtprotosender - INFO - Connection to 149.154.167.51:443/TcpFull complete!
+2025-10-01 18:11:42,648 - __main__ - INFO - Fetching historical messages for the last 30 days...
+2025-10-01 18:11:42,649 - __main__ - INFO - Fetching history for group -4884869527...
+2025-10-01 18:11:42,873 - __main__ - INFO - Historical message in РАССХОД (-4884869527): None
+2025-10-01 18:11:42,874 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 1 Авито 1363
+2025-10-01 18:11:42,875 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 2 Авито 449
+2025-10-01 18:11:42,876 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 3 Авито 258
+2025-10-01 18:11:42,876 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 4 Авито 908
+2025-10-01 18:11:42,877 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 5 Яндекс 20029
+2025-10-01 18:11:42,879 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 6 уборка 1500
+2025-10-01 18:11:42,880 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 7 арбен 51071
+2025-10-01 18:11:42,880 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 8 Авито 1357
+2025-10-01 18:11:42,881 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 9 Авито 648
+2025-10-01 18:11:42,885 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 10 доставка арбен 1000
+2025-10-01 18:11:42,889 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 11 Авито 908
+2025-10-01 18:11:42,891 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 12 Людмила 5000
+2025-10-01 18:11:42,893 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 13 доставка арбен 750
+2025-10-01 18:11:42,895 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 14 Авито 908
+2025-10-01 18:11:42,898 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 15 нарек 1500
+2025-10-01 18:11:42,899 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 16 Авито 908
+2025-10-01 18:11:42,899 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 17 доставка арбен 500
+2025-10-01 18:11:42,900 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 18 Марина 15600
+2025-10-01 18:11:42,900 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 19 Авито 908
+2025-10-01 18:11:42,900 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 20 марквиз 1190
+2025-10-01 18:11:42,900 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 21 нам 20000
+2025-10-01 18:11:42,902 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 22 арбен 71136
+2025-10-01 18:11:42,902 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 23 тесьма 1948
+2025-10-01 18:11:42,902 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 24 вектор 12291
+2025-10-01 18:11:42,903 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 25 доставка арбен 650
+2025-10-01 18:11:42,903 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 26 Марина швея 3500
+2025-10-01 18:11:42,903 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 27 нам 20000
+2025-10-01 18:11:42,903 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 28 Авито 908
+2025-10-01 18:11:42,903 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 29 Яндекс 20029
+2025-10-01 18:11:42,904 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 30 уборка 1500
+2025-10-01 18:11:42,912 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 31 доставка арбен 800
+2025-10-01 18:11:42,913 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 32 Авито 908
+2025-10-01 18:11:42,914 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 33 Авито 648
+2025-10-01 18:11:42,914 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 34 Авито 700
+2025-10-01 18:11:42,914 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 35 Авито 908
+2025-10-01 18:11:42,915 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 36 союз и 5910
+2025-10-01 18:11:42,915 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 37 нам 20000
+2025-10-01 18:11:42,915 - __main__ - INFO - Fetching history for group -4855539306...
+2025-10-01 18:11:43,106 - __main__ - INFO - Historical message in ПРИХОД (-4855539306): None
+2025-10-01 18:11:43,107 - __main__ - INFO - Historical message in ПРИХОД (-4855539306): 1 касса 122000
+2025-10-01 18:11:43,107 - __main__ - INFO - Historical message in ПРИХОД (-4855539306): 2 пинта 44000
+2025-10-01 18:11:43,107 - __main__ - INFO - Historical message in ПРИХОД (-4855539306): 3 кресло самовывоз 7000
+2025-10-01 18:11:43,108 - __main__ - INFO - Historical message in ПРИХОД (-4855539306): 4 диван бок 14000
+2025-10-01 18:11:43,108 - __main__ - INFO - Historical message in ПРИХОД (-4855539306): 5 кровать Аксай 14000
+2025-10-01 18:11:43,108 - __main__ - INFO - Historical message in ПРИХОД (-4855539306): 6 кресло рук 22000
+2025-10-01 18:11:43,109 - __main__ - INFO - Historical message in ПРИХОД (-4855539306): 7 затейанный мир 32000
+2025-10-01 18:11:43,109 - __main__ - INFO - Historical message in ПРИХОД (-4855539306): 8 кресло 8000
+2025-10-01 18:11:43,110 - __main__ - INFO - Historical message in ПРИХОД (-4855539306): 9 югтехмонтах 90000
+2025-10-01 18:11:43,110 - __main__ - INFO - Historical message in ПРИХОД (-4855539306): 10 нарек 55000
+2025-10-01 18:11:43,110 - __main__ - INFO - Подключение к Telegram установлено. Наблюдение за группами...
+2025-10-01 18:25:27,141 - __main__ - INFO - Configuration loaded from config.json
+2025-10-01 18:25:27,141 - telethon.network.mtprotosender - INFO - Connecting to 149.154.167.51:443/TcpFull...
+2025-10-01 18:25:27,143 - telethon.network.mtprotosender - INFO - Connection to 149.154.167.51:443/TcpFull complete!
+2025-10-01 18:25:27,731 - __main__ - INFO - Fetching historical messages for the last 30 days...
+2025-10-01 18:25:27,732 - __main__ - INFO - Fetching history for group -4884869527...
+2025-10-01 18:25:27,943 - __main__ - INFO - Historical message in РАССХОД (-4884869527): None
+2025-10-01 18:25:27,945 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 1 Авито 1363
+2025-10-01 18:25:27,946 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 2 Авито 449
+2025-10-01 18:25:27,946 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 3 Авито 258
+2025-10-01 18:25:27,946 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 4 Авито 908
+2025-10-01 18:25:27,946 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 5 Яндекс 20029
+2025-10-01 18:25:27,947 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 6 уборка 1500
+2025-10-01 18:25:27,947 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 7 арбен 51071
+2025-10-01 18:25:27,947 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 8 Авито 1357
+2025-10-01 18:25:27,948 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 9 Авито 648
+2025-10-01 18:25:27,948 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 10 доставка арбен 1000
+2025-10-01 18:25:27,948 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 11 Авито 908
+2025-10-01 18:25:27,948 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 12 Людмила 5000
+2025-10-01 18:25:27,949 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 13 доставка арбен 750
+2025-10-01 18:25:27,949 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 14 Авито 908
+2025-10-01 18:25:27,949 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 15 нарек 1500
+2025-10-01 18:25:27,950 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 16 Авито 908
+2025-10-01 18:25:27,950 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 17 доставка арбен 500
+2025-10-01 18:25:27,950 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 18 Марина 15600
+2025-10-01 18:25:27,950 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 19 Авито 908
+2025-10-01 18:25:27,951 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 20 марквиз 1190
+2025-10-01 18:25:27,951 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 21 нам 20000
+2025-10-01 18:25:27,951 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 22 арбен 71136
+2025-10-01 18:25:27,952 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 23 тесьма 1948
+2025-10-01 18:25:27,952 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 24 вектор 12291
+2025-10-01 18:25:27,952 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 25 доставка арбен 650
+2025-10-01 18:25:27,953 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 26 Марина швея 3500
+2025-10-01 18:25:27,953 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 27 нам 20000
+2025-10-01 18:25:27,953 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 28 Авито 908
+2025-10-01 18:25:27,954 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 29 Яндекс 20029
+2025-10-01 18:25:27,954 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 30 уборка 1500
+2025-10-01 18:25:27,954 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 31 доставка арбен 800
+2025-10-01 18:25:27,955 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 32 Авито 908
+2025-10-01 18:25:27,955 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 33 Авито 648
+2025-10-01 18:25:27,955 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 34 Авито 700
+2025-10-01 18:25:27,956 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 35 Авито 908
+2025-10-01 18:25:27,956 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 36 союз и 5910
+2025-10-01 18:25:27,956 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 37 нам 20000
+2025-10-01 18:25:27,956 - __main__ - INFO - Fetching history for group -4855539306...
+2025-10-01 18:25:28,151 - __main__ - INFO - Historical message in ПРИХОД (-4855539306): None
+2025-10-01 18:25:28,152 - __main__ - INFO - Historical message in ПРИХОД (-4855539306): 1 касса 122000
+2025-10-01 18:25:28,152 - __main__ - INFO - Historical message in ПРИХОД (-4855539306): 2 пинта 44000
+2025-10-01 18:25:28,152 - __main__ - INFO - Historical message in ПРИХОД (-4855539306): 3 кресло самовывоз 7000
+2025-10-01 18:25:28,153 - __main__ - INFO - Historical message in ПРИХОД (-4855539306): 4 диван бок 14000
+2025-10-01 18:25:28,153 - __main__ - INFO - Historical message in ПРИХОД (-4855539306): 5 кровать Аксай 14000
+2025-10-01 18:25:28,153 - __main__ - INFO - Historical message in ПРИХОД (-4855539306): 6 кресло рук 22000
+2025-10-01 18:25:28,154 - __main__ - INFO - Historical message in ПРИХОД (-4855539306): 7 затейанный мир 32000
+2025-10-01 18:25:28,154 - __main__ - INFO - Historical message in ПРИХОД (-4855539306): 8 кресло 8000
+2025-10-01 18:25:28,154 - __main__ - INFO - Historical message in ПРИХОД (-4855539306): 9 югтехмонтах 90000
+2025-10-01 18:25:28,155 - __main__ - INFO - Historical message in ПРИХОД (-4855539306): 10 нарек 55000
+2025-10-01 18:25:28,155 - __main__ - INFO - Подключение к Telegram установлено. Наблюдение за группами...
+2025-10-01 18:30:44,378 - __main__ - INFO - Configuration loaded from config.json
+2025-10-01 18:30:44,379 - telethon.network.mtprotosender - INFO - Connecting to 149.154.167.51:443/TcpFull...
+2025-10-01 18:30:44,381 - telethon.network.mtprotosender - INFO - Connection to 149.154.167.51:443/TcpFull complete!
+2025-10-01 18:30:45,393 - __main__ - INFO - Fetching historical messages for the last 30 days...
+2025-10-01 18:30:45,394 - __main__ - INFO - Fetching history for group -4884869527...
+2025-10-01 18:30:45,581 - __main__ - INFO - Historical message in РАССХОД (-4884869527): None
+2025-10-01 18:30:45,581 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 1 Авито 1363
+2025-10-01 18:30:45,581 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 2 Авито 449
+2025-10-01 18:30:45,582 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 3 Авито 258
+2025-10-01 18:30:45,582 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 4 Авито 908
+2025-10-01 18:30:45,582 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 5 Яндекс 20029
+2025-10-01 18:30:45,582 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 6 уборка 1500
+2025-10-01 18:30:45,582 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 7 арбен 51071
+2025-10-01 18:30:45,583 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 8 Авито 1357
+2025-10-01 18:30:45,583 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 9 Авито 648
+2025-10-01 18:30:45,583 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 10 доставка арбен 1000
+2025-10-01 18:30:45,583 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 11 Авито 908
+2025-10-01 18:30:45,583 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 12 Людмила 5000
+2025-10-01 18:30:45,584 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 13 доставка арбен 750
+2025-10-01 18:30:45,584 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 14 Авито 908
+2025-10-01 18:30:45,584 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 15 нарек 1500
+2025-10-01 18:30:45,584 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 16 Авито 908
+2025-10-01 18:30:45,584 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 17 доставка арбен 500
+2025-10-01 18:30:45,585 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 18 Марина 15600
+2025-10-01 18:30:45,585 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 19 Авито 908
+2025-10-01 18:30:45,585 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 20 марквиз 1190
+2025-10-01 18:30:45,585 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 21 нам 20000
+2025-10-01 18:30:45,586 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 22 арбен 71136
+2025-10-01 18:30:45,586 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 23 тесьма 1948
+2025-10-01 18:30:45,586 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 24 вектор 12291
+2025-10-01 18:30:45,586 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 25 доставка арбен 650
+2025-10-01 18:30:45,587 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 26 Марина швея 3500
+2025-10-01 18:30:45,587 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 27 нам 20000
+2025-10-01 18:30:45,588 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 28 Авито 908
+2025-10-01 18:30:45,588 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 29 Яндекс 20029
+2025-10-01 18:30:45,588 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 30 уборка 1500
+2025-10-01 18:30:45,589 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 31 доставка арбен 800
+2025-10-01 18:30:45,589 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 32 Авито 908
+2025-10-01 18:30:45,589 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 33 Авито 648
+2025-10-01 18:30:45,589 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 34 Авито 700
+2025-10-01 18:30:45,592 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 35 Авито 908
+2025-10-01 18:30:45,592 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 36 союз и 5910
+2025-10-01 18:30:45,593 - __main__ - INFO - Historical message in РАССХОД (-4884869527): 37 нам 20000
+2025-10-01 18:30:45,593 - __main__ - INFO - Fetching history for group -4855539306...
+2025-10-01 18:30:45,779 - __main__ - INFO - Historical message in ПРИХОД (-4855539306): None
+2025-10-01 18:30:45,780 - __main__ - INFO - Historical message in ПРИХОД (-4855539306): 1 касса 122000
+2025-10-01 18:30:45,780 - __main__ - INFO - Historical message in ПРИХОД (-4855539306): 2 пинта 44000
+2025-10-01 18:30:45,780 - __main__ - INFO - Historical message in ПРИХОД (-4855539306): 3 кресло самовывоз 7000
+2025-10-01 18:30:45,781 - __main__ - INFO - Historical message in ПРИХОД (-4855539306): 4 диван бок 14000
+2025-10-01 18:30:45,781 - __main__ - INFO - Historical message in ПРИХОД (-4855539306): 5 кровать Аксай 14000
+2025-10-01 18:30:45,781 - __main__ - INFO - Historical message in ПРИХОД (-4855539306): 6 кресло рук 22000
+2025-10-01 18:30:45,782 - __main__ - INFO - Historical message in ПРИХОД (-4855539306): 7 затейанный мир 32000
+2025-10-01 18:30:45,782 - __main__ - INFO - Historical message in ПРИХОД (-4855539306): 8 кресло 8000
+2025-10-01 18:30:45,782 - __main__ - INFO - Historical message in ПРИХОД (-4855539306): 9 югтехмонтах 90000
+2025-10-01 18:30:45,783 - __main__ - INFO - Historical message in ПРИХОД (-4855539306): 10 нарек 55000
+2025-10-01 18:30:45,783 - __main__ - INFO - Подключение к Telegram установлено. Наблюдение за группами...
+2025-10-01 19:01:38,628 - parser - INFO - Configuration loaded from config.json
+2025-10-01 19:01:38,629 - parser - INFO - Configuration saved to config.json

@@ -1,0 +1,29 @@
+{
+    "api_id": "20517386",
+    "api_hash": "73457be44439ae991e7ba2bf97820a31",
+    "phone_number": "",
+    "group_ids": [
+        {
+            "id": "-4884869527",
+            "name": "расход"
+        },
+        {
+            "id": "-4855539306",
+            "name": "приход"
+        }
+    ],
+    "group_types": {
+        "-4884869527": "expense",
+        "-4855539306": "income"
+    },
+    "web_server": {
+        "host": "0.0.0.0",
+        "port": 8080,
+        "debug": false
+    },
+    "update_interval": 30,
+    "currency": "RUB",
+    "notifications": true,
+    "auto_update": true,
+    "dark_theme": false
+}
