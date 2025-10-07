@@ -45,7 +45,8 @@ class FinancialAgentApp:
     def load_existing_data(self):
         """Load existing transactions from file in ParserQ format"""
         try:
-            transactions_file = Path('transactions.json')
+            # Загружаем данные из файла transactions.json в директории ParserQ
+            transactions_file = Path('ParserQ/transactions.json')
             if transactions_file.exists():
                 with open(transactions_file, 'r', encoding='utf-8') as f:
                     data = json.load(f)
@@ -393,13 +394,94 @@ def api_settings_post():
         # Update config with new settings
         config.update(new_settings)
         
+        # Обновляем group_types на основе новых групп
+        if 'group_ids' in new_settings:
+            # Предполагаем, что первая группа - расходы, вторая - доходы (или наоборот)
+            # В реальном приложении это должно быть настраиваемо
+            group_types = {}
+            for i, group in enumerate(new_settings['group_ids']):
+                if isinstance(group, dict):
+                    group_id = group['id']
+                else:
+                    group_id = group
+                
+                # Простое распределение: первая группа - расходы, вторая - доходы
+                group_type = 'expense' if i == 0 else 'income' if i == 1 else 'other'
+                group_types[group_id] = group_type
+            
+            config['group_types'] = group_types
+        
         # Save updated config
         with open(config_path, 'w', encoding='utf-8') as f:
             json.dump(config, f, indent=4, ensure_ascii=False)
         
+        # Также обновляем конфигурационный файл парсера
+        parser_config_path = Path('ParserQ/config.json')
+        if parser_config_path.exists():
+            with open(parser_config_path, 'r', encoding='utf-8') as f:
+                parser_config = json.load(f)
+        else:
+            parser_config = {}
+        
+        # Обновляем настройки парсера
+        if 'api_id' in new_settings:
+            parser_config['api_id'] = new_settings['api_id']
+        if 'api_hash' in new_settings:
+            parser_config['api_hash'] = new_settings['api_hash']
+        if 'phone_number' in new_settings:
+            parser_config['phone_number'] = new_settings['phone_number']
+        if 'group_ids' in new_settings:
+            # Конвертируем группы в нужный формат для парсера
+            parser_config['group_ids'] = []
+            for group in new_settings['group_ids']:
+                if isinstance(group, dict):
+                    # Новый формат: {'id': '-123', 'name': 'Group Name'}
+                    try:
+                        parser_config['group_ids'].append(int(group['id']))
+                    except (ValueError, KeyError):
+                        # Если не удалось сконвертировать, пропускаем
+                        pass
+                else:
+                    # Старый формат: просто ID как строка
+                    try:
+                        parser_config['group_ids'].append(int(group))
+                    except ValueError:
+                        # Если не удалось сконвертировать, пропускаем
+                        pass
+            
+            # Также обновляем group_types для парсера
+            parser_group_types = {}
+            for i, group in enumerate(new_settings['group_ids']):
+                if isinstance(group, dict):
+                    group_id = group['id']
+                else:
+                    group_id = group
+                
+                # Простое распределение: первая группа - расходы, вторая - доходы
+                group_type = 'expense' if i == 0 else 'income' if i == 1 else 'other'
+                parser_group_types[group_id] = group_type
+            
+            parser_config['group_types'] = parser_group_types
+        
+        # Сохраняем обновленный конфиг парсера
+        with open(parser_config_path, 'w', encoding='utf-8') as f:
+            json.dump(parser_config, f, indent=4, ensure_ascii=False)
+        
+        # Очищаем данные транзакций в директории ParserQ
+        transactions_file = Path('ParserQ/transactions.json')
+        if transactions_file.exists():
+            # Создаем пустую структуру
+            empty_data = {"income": [], "expense": [], "last_updated": datetime.now().isoformat()}
+            with open(transactions_file, 'w', encoding='utf-8') as f:
+                json.dump(empty_data, f, indent=2, ensure_ascii=False)
+        
+        # Обновляем состояние приложения
+        financial_app.transactions = []
+        financial_app.last_update = datetime.now()  # type: ignore
+        
         return jsonify({
             'success': True,
-            'message': 'Settings updated successfully'
+            'message': 'Settings updated successfully and data cleared'
         })
     
     except Exception as e:
@@ -413,16 +495,44 @@ def api_settings_post():
 def api_force_update():
     """Force data update"""
     try:
-        if financial_app.force_update():
-            return jsonify({
-                'success': True,
-                'message': 'Update started in background'
-            })
-        else:
-            return jsonify({
-                'success': False,
-                'message': 'Update already in progress'
-            })
+        # Запускаем обновление данных в фоновом режиме
+        def run_parser():
+            try:
+                # Запускаем парсер из директории ParserQ
+                import subprocess
+                import os
+                
+                parser_dir = os.path.join(os.getcwd(), 'ParserQ')
+                if os.path.exists(parser_dir):
+                    result = subprocess.run(
+                        ['python', 'fetch_telegram_data.py'], 
+                        cwd=parser_dir,
+                        capture_output=True,
+                        text=True
+                    )
+                    
+                    if result.returncode == 0:
+                        logger.info("Parser executed successfully")
+                        # После успешного выполнения парсера, перезагружаем данные в приложении
+                        financial_app.load_existing_data()
+                        # Обновляем время последнего обновления
+                        financial_app.last_update = datetime.now()  # type: ignore
+                    else:
+                        logger.error(f"Parser execution failed: {result.stderr}")
+                else:
+                    logger.error("ParserQ directory not found")
+            except Exception as e:
+                logger.error(f"Error running parser: {e}")
+        
+        # Запускаем парсер в отдельном потоке
+        import threading
+        parser_thread = threading.Thread(target=run_parser)
+        parser_thread.start()
+        
+        return jsonify({
+            'success': True,
+            'message': 'Update started in background'
+        })
     except Exception as e:
         logger.error(f"Error in api_force_update: {e}")
         return jsonify({
@@ -447,12 +557,12 @@ def api_status():
 def api_clear_data():
     """Clear all transaction data"""
     try:
-        # Clear transactions file
-        transactions_file = Path('transactions.json')
-        if transactions_file.exists():
+        # Clear transactions file in ParserQ directory
+        parser_transactions_file = Path('ParserQ/transactions.json')
+        if parser_transactions_file.exists():
             # Create empty structure
-            empty_data = {"income": [], "expense": []}
-            with open(transactions_file, 'w', encoding='utf-8') as f:
+            empty_data = {"income": [], "expense": [], "last_updated": datetime.now().isoformat()}
+            with open(parser_transactions_file, 'w', encoding='utf-8') as f:
                 json.dump(empty_data, f, indent=2, ensure_ascii=False)
         
         # Update app state

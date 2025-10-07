@@ -431,6 +431,75 @@
             `}).join('');
         }
 
+        // Добавляем недостающие функции для управления группами
+        function addGroup() {
+            const groupId = document.getElementById('newGroupId').value.trim();
+            const groupName = document.getElementById('newGroupName').value.trim();
+            
+            if (!groupId) {
+                showNotification('Введите ID группы', 'error');
+                return;
+            }
+            
+            // Проверяем, не существует ли уже группа с таким ID
+            const existingGroup = groups.find(g => {
+                const id = typeof g === 'object' ? g.id : g;
+                return id === groupId;
+            });
+            
+            if (existingGroup) {
+                showNotification('Группа с таким ID уже существует', 'error');
+                return;
+            }
+            
+            groups.push({
+                id: groupId,
+                name: groupName || `Группа ${groupId}`
+            });
+            
+            updateGroupsList();
+            
+            // Очищаем поля ввода
+            document.getElementById('newGroupId').value = '';
+            document.getElementById('newGroupName').value = '';
+            
+            showNotification('Группа добавлена', 'success');
+        }
+
+        function editGroup(groupId) {
+            const groupIndex = groups.findIndex(g => {
+                // Handle both old format (string) and new format (object)
+                const id = typeof g === 'object' ? g.id : g;
+                return id === groupId;
+            });
+            
+            if (groupIndex === -1) return;
+            
+            // Получаем текущее имя группы
+            const currentGroupName = typeof groups[groupIndex] === 'object' ? groups[groupIndex].name : `Группа ${groupIndex + 1}`;
+            const newName = prompt('Введите новое название группы:', currentGroupName);
+            
+            if (newName && newName.trim()) {
+                if (typeof groups[groupIndex] === 'string') {
+                    // Преобразуем старый формат в новый
+                    groups[groupIndex] = { id: groupId, name: newName.trim() };
+                } else {
+                    // Обновляем имя в новом формате
+                    groups[groupIndex].name = newName.trim();
+                }
+                updateGroupsList();
+                showNotification('Группа обновлена', 'success');
+            }
+        }
+
+        function removeGroup(index) {
+            if (confirm('Вы уверены, что хотите удалить эту группу?')) {
+                groups.splice(index, 1);
+                updateGroupsList();
+                showNotification('Группа удалена', 'success');
+            }
+        }
+
         async function loadSystemInfo() {
             try {
                 const response = await fetch('/api/status');
@@ -486,6 +555,41 @@
             }, 3000);
         }
 
+        // Функция для сохранения всех настроек
+        async function saveAllSettings() {
+            try {
+                const settingsData = {
+                    api_id: document.getElementById('apiId').value,
+                    api_hash: document.getElementById('apiHash').value,
+                    phone_number: document.getElementById('phoneNumber').value,
+                    currency: document.getElementById('currency').value,
+                    auto_update: document.getElementById('autoUpdate').checked,
+                    notifications: document.getElementById('notifications').checked,
+                    dark_theme: document.getElementById('darkTheme').checked,
+                    group_ids: groups
+                };
+
+                const response = await fetch('/api/settings', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(settingsData)
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    showNotification('Настройки успешно сохранены', 'success');
+                } else {
+                    showNotification('Ошибка сохранения настроек: ' + result.error, 'error');
+                }
+            } catch (error) {
+                console.error('Error saving settings:', error);
+                showNotification('Ошибка подключения к серверу', 'error');
+            }
+        }
+
         // Event handlers
         function switchTab(tab) {
             const pages = {
@@ -502,6 +606,155 @@
 
         function goBack() {
             window.history.back();
+        }
+
+        // Функции управления данными
+        async function exportData() {
+            try {
+                const response = await fetch('/api/export');
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Создаем файл для скачивания
+                    const blob = new Blob([JSON.stringify(data.data, null, 2)], {type: 'application/json'});
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'financial_data_export.json';
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                    
+                    showNotification('Данные экспортированы успешно', 'success');
+                } else {
+                    showNotification('Ошибка экспорта данных: ' + data.error, 'error');
+                }
+            } catch (error) {
+                console.error('Error exporting data:', error);
+                showNotification('Ошибка подключения к серверу', 'error');
+            }
+        }
+
+        async function importData() {
+            try {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = '.json';
+                
+                input.onchange = async (event) => {
+                    const file = event.target.files[0];
+                    if (!file) return;
+                    
+                    const reader = new FileReader();
+                    reader.onload = async (e) => {
+                        try {
+                            const jsonData = JSON.parse(e.target.result);
+                            
+                            const response = await fetch('/api/import', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify(jsonData)
+                            });
+                            
+                            const result = await response.json();
+                            
+                            if (result.success) {
+                                showNotification('Данные импортированы успешно', 'success');
+                                // Перезагружаем страницу для отображения новых данных
+                                setTimeout(() => {
+                                    location.reload();
+                                }, 1000);
+                            } else {
+                                showNotification('Ошибка импорта данных: ' + result.error, 'error');
+                            }
+                        } catch (parseError) {
+                            console.error('Error parsing JSON:', parseError);
+                            showNotification('Неверный формат файла', 'error');
+                        }
+                    };
+                    
+                    reader.readAsText(file);
+                };
+                
+                input.click();
+            } catch (error) {
+                console.error('Error importing data:', error);
+                showNotification('Ошибка импорта данных', 'error');
+            }
+        }
+
+        async function clearData() {
+            if (confirm('Вы уверены, что хотите удалить все данные? Это действие нельзя отменить.')) {
+                try {
+                    const response = await fetch('/api/clear-data', {
+                        method: 'POST'
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        showNotification('Все данные удалены', 'success');
+                        // Обновляем информацию о системе
+                        loadSystemInfo();
+                    } else {
+                        showNotification('Ошибка очистки данных: ' + result.error, 'error');
+                    }
+                } catch (error) {
+                    console.error('Error clearing data:', error);
+                    showNotification('Ошибка подключения к серверу', 'error');
+                }
+            }
+        }
+
+        // Функция для принудительного обновления данных
+        async function forceUpdate() {
+            try {
+                showNotification('Начинаем обновление данных...', 'info');
+                
+                const response = await fetch('/api/update', {
+                    method: 'POST'
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showNotification('Данные успешно обновлены', 'success');
+                    // Обновляем информацию о системе
+                    loadSystemInfo();
+                } else {
+                    showNotification('Ошибка обновления данных: ' + result.error, 'error');
+                }
+            } catch (error) {
+                console.error('Error updating data:', error);
+                showNotification('Ошибка подключения к серверу', 'error');
+            }
+        }
+
+        // Функция для тестирования соединения
+        async function testConnection() {
+            try {
+                showNotification('Проверка соединения...', 'info');
+                
+                const response = await fetch('/api/test-connection');
+                const result = await response.json();
+                
+                if (result.success) {
+                    showNotification('Соединение успешно', 'success');
+                } else {
+                    showNotification('Ошибка соединения: ' + result.error, 'error');
+                }
+            } catch (error) {
+                console.error('Connection test error:', error);
+                showNotification('Ошибка подключения к серверу', 'error');
+            }
+        }
+
+        // Функция для отображения ошибок
+        function showError(message) {
+            showNotification(message, 'error');
         }
     </script>
 
