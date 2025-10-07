@@ -179,6 +179,50 @@
   ],
   "expense": [
     {
+      "id": "61699",
+      "timestamp": "2025-10-03T13:41:19+00:00",
+      "group_id": "-4884869527",
+      "group_title": "РАССХОД",
+      "text": "48 Марина гещ 12500",
+      "sender_id": 0,
+      "amount": 12500.0,
+      "currency": "RUB",
+      "description": "48 марина гещ 12500"
+    },
+    {
+      "id": "61686",
+      "timestamp": "2025-10-03T12:43:30+00:00",
+      "group_id": "-4884869527",
+      "group_title": "РАССХОД",
+      "text": "47 Сергей 41000",
+      "sender_id": 0,
+      "amount": 41000.0,
+      "currency": "RUB",
+      "description": "47 сергей 41000"
+    },
+    {
+      "id": "61685",
+      "timestamp": "2025-10-03T12:35:04+00:00",
+      "group_id": "-4884869527",
+      "group_title": "РАССХОД",
+      "text": "46 гев 25000",
+      "sender_id": 0,
+      "amount": 25000.0,
+      "currency": "RUB",
+      "description": "46 гев 25000"
+    },
+    {
+      "id": "61684",
+      "timestamp": "2025-10-03T12:25:30+00:00",
+      "group_id": "-4884869527",
+      "group_title": "РАССХОД",
+      "text": "45 Марина 47000",
+      "sender_id": 0,
+      "amount": 47000.0,
+      "currency": "RUB",
+      "description": "45 марина 47000"
+    },
+    {
       "id": "61675",
       "timestamp": "2025-10-03T09:25:31+00:00",
       "group_id": "-4884869527",
@@ -663,5 +707,5 @@
       "description": "1 авито 1363"
     }
   ],
-  "last_updated": "2025-10-03T14:39:24.899312"
+  "last_updated": "2025-10-07T11:42:44.723065"
 }

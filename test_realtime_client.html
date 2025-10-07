@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест обновлений в реальном времени</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+    <div class="max-w-4xl mx-auto p-6">
+        <h1 class="text-3xl font-bold text-center mb-8">Тест обновлений в реальном времени</h1>
+        
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <h2 class="text-xl font-semibold mb-4">Статус подключения</h2>
+            <div id="connectionStatus" class="text-lg">Проверка подключения...</div>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-xl font-semibold mb-4">Доходы</h2>
+                <div id="incomeList" class="space-y-2">
+                    <div class="text-gray-500">Загрузка данных...</div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-xl font-semibold mb-4">Расходы</h2>
+                <div id="expenseList" class="space-y-2">
+                    <div class="text-gray-500">Загрузка данных...</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-xl font-semibold mb-4">Все транзакции</h2>
+            <div id="allTransactions" class="space-y-2">
+                <div class="text-gray-500">Загрузка данных...</div>
+            </div>
+        </div>
+        
+        <div class="mt-6 text-center">
+            <button onclick="manualRefresh()" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                Обновить данные вручную
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let transactions = [];
+        let lastUpdate = null;
+        
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            loadData();
+            startAutoRefresh();
+        });
+        
+        async function loadData() {
+            try {
+                const response = await fetch('/api/transactions');
+                const data = await response.json();
+                
+                if (data.success) {
+                    transactions = data.data;
+                    updateUI();
+                    updateConnectionStatus('Подключено');
+                } else {
+                    updateConnectionStatus('Ошибка загрузки данных');
+                }
+            } catch (error) {
+                console.error('Error loading data:', error);
+                updateConnectionStatus('Ошибка подключения');
+            }
+        }
+        
+        function updateUI() {
+            // Update income list
+            const incomeTransactions = transactions.filter(t => t.type === 'income');
+            const incomeList = document.getElementById('incomeList');
+            if (incomeTransactions.length > 0) {
+                incomeList.innerHTML = incomeTransactions.map(t => `
+                    <div class="p-3 border rounded">
+                        <div class="font-medium">${t.description}</div>
+                        <div class="text-green-600 font-bold">+${t.amount} ₽</div>
+                        <div class="text-sm text-gray-500">${new Date(t.date).toLocaleString('ru-RU')}</div>
+                    </div>
+                `).join('');
+            } else {
+                incomeList.innerHTML = '<div class="text-gray-500">Нет доходов</div>';
+            }
+            
+            // Update expense list
+            const expenseTransactions = transactions.filter(t => t.type === 'expense');
+            const expenseList = document.getElementById('expenseList');
+            if (expenseTransactions.length > 0) {
+                expenseList.innerHTML = expenseTransactions.map(t => `
+                    <div class="p-3 border rounded">
+                        <div class="font-medium">${t.description}</div>
+                        <div class="text-red-600 font-bold">-${t.amount} ₽</div>
+                        <div class="text-sm text-gray-500">${new Date(t.date).toLocaleString('ru-RU')}</div>
+                    </div>
+                `).join('');
+            } else {
+                expenseList.innerHTML = '<div class="text-gray-500">Нет расходов</div>';
+            }
+            
+            // Update all transactions list
+            const allTransactionsList = document.getElementById('allTransactions');
+            if (transactions.length > 0) {
+                allTransactionsList.innerHTML = transactions
+                    .sort((a, b) => new Date(b.date) - new Date(a.date))
+                    .map(t => `
+                        <div class="p-3 border rounded flex justify-between items-center">
+                            <div>
+                                <div class="font-medium">${t.description}</div>
+                                <div class="text-sm text-gray-500">${new Date(t.date).toLocaleString('ru-RU')}</div>
+                            </div>
+                            <div class="font-bold ${t.type === 'income' ? 'text-green-600' : 'text-red-600'}">
+                                ${t.type === 'income' ? '+' : '-'}${t.amount} ₽
+                            </div>
+                        </div>
+                    `).join('');
+            } else {
+                allTransactionsList.innerHTML = '<div class="text-gray-500">Нет транзакций</div>';
+            }
+        }
+        
+        function updateConnectionStatus(status) {
+            const statusElement = document.getElementById('connectionStatus');
+            statusElement.textContent = status;
+        }
+        
+        function startAutoRefresh() {
+            // Auto refresh every 2 seconds
+            setInterval(() => {
+                loadData();
+            }, 2000);
+        }
+        
+        function manualRefresh() {
+            loadData();
+        }
+    </script>
+</body>
+</html>

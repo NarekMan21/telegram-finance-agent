@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  telegram-financial-agent:
+    build: .
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./data:/app/data
+      - ./config.json:/app/config.json
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    networks:
+      - financial-agent-network
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - telegram-financial-agent
+    restart: unless-stopped
+    networks:
+      - financial-agent-network
+
+networks:
+  financial-agent-network:
+    driver: bridge

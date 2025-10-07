@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Настройки - Telegram Финансовый Агент</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .bottom-nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        .nav-item {
+            transition: all 0.2s ease;
+        }
+        .nav-item.active {
+            color: #667eea;
+        }
+        .nav-item:not(.active):hover {
+            color: #764ba2;
+        }
+        .setting-item {
+            transition: all 0.2s ease;
+        }
+        .setting-item:hover {
+            background: #f8fafc;
+        }
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: #667eea;
+        }
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <!-- Header -->
+    <header class="gradient-bg text-white p-4 sticky top-0 z-40">
+        <div class="flex items-center justify-between max-w-md mx-auto">
+            <div class="flex items-center space-x-3">
+                <button onclick="goBack()" class="w-10 h-10 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <div>
+                    <h1 class="font-bold text-lg">Настройки</h1>
+                    <p class="text-xs opacity-80">Конфигурация системы</p>
+                </div>
+            </div>
+            <button class="w-10 h-10 bg-white bg-opacity-20 rounded-lg flex items-center justify-center" onclick="testConnection()">
+                <i class="fas fa-wifi"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-md mx-auto pb-20">
+        <!-- Telegram API Settings -->
+        <div class="p-4">
+            <div class="bg-white rounded-xl shadow-sm mb-6">
+                <div class="p-4 border-b border-gray-100">
+                    <h3 class="font-semibold text-gray-800 flex items-center">
+                        <i class="fab fa-telegram text-blue-500 mr-2"></i>
+                        Telegram API
+                    </h3>
+                    <p class="text-xs text-gray-500 mt-1">Настройки подключения к Telegram</p>
+                </div>
+                
+                <div class="p-4 space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">API ID</label>
+                        <input type="text" id="apiId" class="w-full p-3 border border-gray-300 rounded-lg" placeholder="Ваш API ID" value="20517386">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">API Hash</label>
+                        <input type="password" id="apiHash" class="w-full p-3 border border-gray-300 rounded-lg" placeholder="Ваш API Hash" value="73457be44439ae991e7ba2bf97820a31">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Номер телефона</label>
+                        <input type="tel" id="phoneNumber" class="w-full p-3 border border-gray-300 rounded-lg" placeholder="+79281234567" value="+79281307511">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Group Settings -->
+            <div class="bg-white rounded-xl shadow-sm mb-6">
+                <div class="p-4 border-b border-gray-100">
+                    <h3 class="font-semibold text-gray-800 flex items-center">
+                        <i class="fas fa-users text-purple-500 mr-2"></i>
+                        Группы для мониторинга
+                    </h3>
+                    <p class="text-xs text-gray-500 mt-1">ID групп и их назначение</p>
+                </div>
+                
+                <div class="p-4">
+                    <div class="space-y-3" id="groupList">
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div>
+                                <div class="font-medium text-sm">-4884869527</div>
+                                <div class="text-xs text-gray-500">Расходы</div>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <button class="text-blue-500" onclick="editGroup('-4884869527')">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="text-red-500" onclick="removeGroup('-4884869527')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div>
+                                <div class="font-medium text-sm">-4855539306</div>
+                                <div class="text-xs text-gray-500">Приходы</div>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <button class="text-blue-500" onclick="editGroup('-4855539306')">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="text-red-500" onclick="removeGroup('-4855539306')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button onclick="addGroup()" class="w-full mt-3 p-3 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 flex items-center justify-center">
+                        <i class="fas fa-plus mr-2"></i>
+                        Добавить группу
+                    </button>
+                </div>
+            </div>
+
+            <!-- App Settings -->
+            <div class="bg-white rounded-xl shadow-sm mb-6">
+                <div class="p-4 border-b border-gray-100">
+                    <h3 class="font-semibold text-gray-800 flex items-center">
+                        <i class="fas fa-cog text-orange-500 mr-2"></i>
+                        Приложение
+                    </h3>
+                    <p class="text-xs text-gray-500 mt-1">Общие настройки</p>
+                </div>
+                
+                <div class="divide-y divide-gray-100">
+                    <div class="setting-item flex items-center justify-between p-4">
+                        <div>
+                            <div class="font-medium text-sm">Автообновление</div>
+                            <div class="text-xs text-gray-500">Обновлять данные каждые 30 секунд</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="autoUpdate" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    
+                    <div class="setting-item flex items-center justify-between p-4">
+                        <div>
+                            <div class="font-medium text-sm">Уведомления</div>
+                            <div class="text-xs text-gray-500">Показывать уведомления о новых операциях</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="notifications" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    
+                    <div class="setting-item flex items-center justify-between p-4">
+                        <div>
+                            <div class="font-medium text-sm">Темная тема</div>
+                            <div class="text-xs text-gray-500">Использовать темную тему оформления</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="darkTheme">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    
+                    <div class="setting-item flex items-center justify-between p-4">
+                        <div>
+                            <div class="font-medium text-sm">Валюта</div>
+                            <div class="text-xs text-gray-500">Основная валюта для отображения</div>
+                        </div>
+                        <select id="currency" class="bg-gray-100 rounded-lg px-3 py-1 text-sm">
+                            <option value="RUB">₽ RUB</option>
+                            <option value="USD">$ USD</option>
+                            <option value="EUR">€ EUR</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Management -->
+            <div class="bg-white rounded-xl shadow-sm mb-6">
+                <div class="p-4 border-b border-gray-100">
+                    <h3 class="font-semibold text-gray-800 flex items-center">
+                        <i class="fas fa-database text-green-500 mr-2"></i>
+                        Данные
+                    </h3>
+                    <p class="text-xs text-gray-500 mt-1">Управление данными</p>
+                </div>
+                
+                <div class="divide-y divide-gray-100">
+                    <button class="setting-item w-full flex items-center justify-between p-4 text-left" onclick="exportData()">
+                        <div class="flex items-center">
+                            <i class="fas fa-download text-blue-500 mr-3"></i>
+                            <div>
+                                <div class="font-medium text-sm">Экспорт данных</div>
+                                <div class="text-xs text-gray-500">Сохранить все транзакции</div>
+                            </div>
+                        </div>
+                        <i class="fas fa-chevron-right text-gray-400"></i>
+                    </button>
+                    
+                    <button class="setting-item w-full flex items-center justify-between p-4 text-left" onclick="importData()">
+                        <div class="flex items-center">
+                            <i class="fas fa-upload text-green-500 mr-3"></i>
+                            <div>
+                                <div class="font-medium text-sm">Импорт данных</div>
+                                <div class="text-xs text-gray-500">Загрузить транзакции из файла</div>
+                            </div>
+                        </div>
+                        <i class="fas fa-chevron-right text-gray-400"></i>
+                    </button>
+                    
+                    <button class="setting-item w-full flex items-center justify-between p-4 text-left text-red-500" onclick="clearData()">
+                        <div class="flex items-center">
+                            <i class="fas fa-trash mr-3"></i>
+                            <div>
+                                <div class="font-medium text-sm">Очистить данные</div>
+                                <div class="text-xs opacity-80">Удалить все транзакции</div>
+                            </div>
+                        </div>
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- System Info -->
+            <div class="bg-white rounded-xl shadow-sm mb-6">
+                <div class="p-4 border-b border-gray-100">
+                    <h3 class="font-semibold text-gray-800 flex items-center">
+                        <i class="fas fa-info-circle text-blue-500 mr-2"></i>
+                        Система
+                    </h3>
+                    <p class="text-xs text-gray-500 mt-1">Информация о приложении</p>
+                </div>
+                
+                <div class="p-4 space-y-3">
+                    <div class="flex justify-between">
+                        <span class="text-sm text-gray-600">Версия</span>
+                        <span class="text-sm font-medium">1.0.0</span>
+                    </div>
+                    
+                    <div class="flex justify-between">
+                        <span class="text-sm text-gray-600">Последнее обновление</span>
+                        <span class="text-sm font-medium" id="lastUpdate">Только что</span>
+                    </div>
+                    
+                    <div class="flex justify-between">
+                        <span class="text-sm text-gray-600">Всего операций</span>
+                        <span class="text-sm font-medium" id="totalOperations">0</span>
+                    </div>
+                    
+                    <div class="flex justify-between">
+                        <span class="text-sm text-gray-600">Статус подключения</span>
+                        <span class="text-sm font-medium text-green-500" id="connectionStatus">Подключено</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Save Button -->
+            <button onclick="saveAllSettings()" class="w-full bg-gradient-to-r from-purple-500 to-blue-600 text-white py-4 rounded-xl font-medium mb-4">
+                Сохранить все настройки
+            </button>
+        </div>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="fixed bottom-0 left-0 right-0 bottom-nav z-50">
+        <div class="max-w-md mx-auto px-4">
+            <div class="flex justify-around py-2">
+                <button class="nav-item flex flex-col items-center py-2 px-3" onclick="switchTab('dashboard')">
+                    <i class="fas fa-home text-lg mb-1"></i>
+                    <span class="text-xs">Главная</span>
+                </button>
+                <button class="nav-item flex flex-col items-center py-2 px-3" onclick="switchTab('transactions')">
+                    <i class="fas fa-exchange-alt text-lg mb-1"></i>
+                    <span class="text-xs">Операции</span>
+                </button>
+                <button class="nav-item flex flex-col items-center py-2 px-3" onclick="switchTab('analytics')">
+                    <i class="fas fa-chart-bar text-lg mb-1"></i>
+                    <span class="text-xs">Аналитика</span>
+                </button>
+                <button class="nav-item active flex flex-col items-center py-2 px-3" onclick="switchTab('settings')">
+                    <i class="fas fa-cog text-lg mb-1"></i>
+                    <span class="text-xs">Настройки</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <script src="main.js"></script>
+</body>
+</html>

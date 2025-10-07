@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Clear Data Function</title>
+    <script>
+        // Mock showNotification function for testing
+        function showNotification(message, type) {
+            console.log(`Notification (${type}): ${message}`);
+            // Also show in the UI
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            notification.style.padding = '10px';
+            notification.style.margin = '5px';
+            notification.style.borderRadius = '5px';
+            notification.style.color = 'white';
+            notification.style.backgroundColor = type === 'success' ? 'green' : type === 'error' ? 'red' : 'blue';
+            document.getElementById('notifications').appendChild(notification);
+        }
+
+        // Test the clearData function
+        async function testClearData() {
+            console.log("Testing clearData function...");
+            
+            // Mock the Flask API call
+            const originalFetch = window.fetch;
+            window.fetch = async function(url, options) {
+                console.log(`Mock fetch called: ${url}`, options);
+                
+                // Simulate a successful response
+                return {
+                    json: async () => ({
+                        success: true,
+                        message: 'Data cleared successfully'
+                    })
+                };
+            };
+            
+            // Call the clearData function
+            await clearDataFlask();
+            
+            // Restore original fetch
+            window.fetch = originalFetch;
+            
+            console.log("Test completed");
+        }
+
+        // The clearDataFlask function from our implementation
+        async function clearDataFlask() {
+            if (confirm('Вы уверены, что хотите удалить все транзакции? Это действие нельзя отменить.')) {
+                try {
+                    const response = await fetch('/api/clear-data', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        showNotification('Данные успешно очищены', 'success');
+                        // Reload page after a short delay to show updated data
+                        setTimeout(() => {
+                            console.log('Would reload page here');
+                        }, 1500);
+                    } else {
+                        showNotification('Ошибка очистки: ' + data.error, 'error');
+                    }
+                } catch (error) {
+                    console.error('Error clearing data:', error);
+                    showNotification('Ошибка подключения к серверу', 'error');
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>Test Clear Data Function</h1>
+    <button onclick="testClearData()">Test Clear Data</button>
+    <div id="notifications" style="margin-top: 20px;"></div>
+    
+    <script>
+        // Show a notification to verify the function works
+        showNotification('Testing notification system', 'info');
+    </script>
+</body>
+</html>

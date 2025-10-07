@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест отображения данных</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+    <div class="max-w-4xl mx-auto p-6">
+        <h1 class="text-3xl font-bold text-center mb-8">Тест отображения данных</h1>
+        
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <h2 class="text-xl font-semibold mb-4">Статус</h2>
+            <div id="status" class="text-lg">Загрузка...</div>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-xl font-semibold mb-4">Доходы (<span id="incomeCount">0</span>)</h2>
+                <div id="incomeList" class="space-y-2">
+                    <div class="text-gray-500">Загрузка данных...</div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-xl font-semibold mb-4">Расходы (<span id="expenseCount">0</span>)</h2>
+                <div id="expenseList" class="space-y-2">
+                    <div class="text-gray-500">Загрузка данных...</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-xl font-semibold mb-4">Все транзакции (<span id="totalCount">0</span>)</h2>
+            <div id="allTransactions" class="space-y-2">
+                <div class="text-gray-500">Загрузка данных...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let transactions = [];
+        
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            loadData();
+        });
+        
+        async function loadData() {
+            try {
+                updateStatus('Загрузка данных...');
+                const response = await fetch('/api/transactions');
+                const data = await response.json();
+                
+                if (data.success) {
+                    transactions = data.data;
+                    updateUI();
+                    updateStatus('Данные загружены успешно');
+                } else {
+                    updateStatus('Ошибка загрузки данных: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Error loading data:', error);
+                updateStatus('Ошибка подключения: ' + error.message);
+            }
+        }
+        
+        function updateUI() {
+            // Update counts
+            document.getElementById('totalCount').textContent = transactions.length;
+            
+            // Update income list
+            const incomeTransactions = transactions.filter(t => t.type === 'income');
+            document.getElementById('incomeCount').textContent = incomeTransactions.length;
+            const incomeList = document.getElementById('incomeList');
+            if (incomeTransactions.length > 0) {
+                incomeList.innerHTML = incomeTransactions.map(t => `
+                    <div class="p-3 border rounded">
+                        <div class="font-medium">${t.description}</div>
+                        <div class="text-green-600 font-bold">+${t.amount} ₽</div>
+                        <div class="text-sm text-gray-500">${new Date(t.date).toLocaleString('ru-RU')}</div>
+                    </div>
+                `).join('');
+            } else {
+                incomeList.innerHTML = '<div class="text-gray-500">Нет доходов</div>';
+            }
+            
+            // Update expense list
+            const expenseTransactions = transactions.filter(t => t.type === 'expense');
+            document.getElementById('expenseCount').textContent = expenseTransactions.length;
+            const expenseList = document.getElementById('expenseList');
+            if (expenseTransactions.length > 0) {
+                expenseList.innerHTML = expenseTransactions.map(t => `
+                    <div class="p-3 border rounded">
+                        <div class="font-medium">${t.description}</div>
+                        <div class="text-red-600 font-bold">-${t.amount} ₽</div>
+                        <div class="text-sm text-gray-500">${new Date(t.date).toLocaleString('ru-RU')}</div>
+                    </div>
+                `).join('');
+            } else {
+                expenseList.innerHTML = '<div class="text-gray-500">Нет расходов</div>';
+            }
+            
+            // Update all transactions list
+            const allTransactionsList = document.getElementById('allTransactions');
+            if (transactions.length > 0) {
+                allTransactionsList.innerHTML = transactions
+                    .sort((a, b) => new Date(b.date) - new Date(a.date))
+                    .map(t => `
+                        <div class="p-3 border rounded flex justify-between items-center">
+                            <div>
+                                <div class="font-medium">${t.description}</div>
+                                <div class="text-sm text-gray-500">${new Date(t.date).toLocaleString('ru-RU')}</div>
+                            </div>
+                            <div class="font-bold ${t.type === 'income' ? 'text-green-600' : 'text-red-600'}">
+                                ${t.type === 'income' ? '+' : '-'}${t.amount} ₽
+                            </div>
+                        </div>
+                    `).join('');
+            } else {
+                allTransactionsList.innerHTML = '<div class="text-gray-500">Нет транзакций</div>';
+            }
+        }
+        
+        function updateStatus(status) {
+            const statusElement = document.getElementById('status');
+            statusElement.textContent = status;
+        }
+    </script>
+</body>
+</html>

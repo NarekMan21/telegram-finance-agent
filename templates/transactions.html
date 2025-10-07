@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Операции - Telegram Финансовый Агент</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/3.0.3/plotly.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .bottom-nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        .nav-item {
+            transition: all 0.2s ease;
+        }
+        .nav-item.active {
+            color: #667eea;
+        }
+        .nav-item:not(.active):hover {
+            color: #764ba2;
+        }
+        .filter-chip {
+            transition: all 0.2s ease;
+        }
+        .filter-chip.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .transaction-item {
+            transition: all 0.2s ease;
+        }
+        .transaction-item:hover {
+            background: #f8fafc;
+        }
+        .loading-spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <!-- Header -->
+    <header class="gradient-bg text-white p-4 sticky top-0 z-40">
+        <div class="flex items-center justify-between max-w-md mx-auto">
+            <div class="flex items-center space-x-3">
+                <button onclick="goBack()" class="w-10 h-10 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <div>
+                    <h1 class="font-bold text-lg">Операции</h1>
+                    <p class="text-xs opacity-80" id="transactionCountHeader">0 операций</p>
+                </div>
+            </div>
+            <div class="flex space-x-2">
+                <button class="w-10 h-10 bg-white bg-opacity-20 rounded-lg flex items-center justify-center" onclick="forceUpdate()">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+                <button class="w-10 h-10 bg-white bg-opacity-20 rounded-lg flex items-center justify-center" onclick="toggleFilters()">
+                    <i class="fas fa-filter"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Filter Bar -->
+    <div id="filterBar" class="bg-white border-b border-gray-200 p-4 hidden">
+        <div class="max-w-md mx-auto">
+            <div class="flex space-x-2 mb-3 overflow-x-auto">
+                <button class="filter-chip px-3 py-1 rounded-full text-sm whitespace-nowrap bg-gray-100 text-gray-700 active" onclick="filterByType('all')">
+                    Все
+                </button>
+                <button class="filter-chip px-3 py-1 rounded-full text-sm whitespace-nowrap bg-gray-100 text-gray-700" onclick="filterByType('income')">
+                    Приходы
+                </button>
+                <button class="filter-chip px-3 py-1 rounded-full text-sm whitespace-nowrap bg-gray-100 text-gray-700" onclick="filterByType('expense')">
+                    Расходы
+                </button>
+                <button class="filter-chip px-3 py-1 rounded-full text-sm whitespace-nowrap bg-gray-100 text-gray-700" onclick="filterByType('today')">
+                    Сегодня
+                </button>
+                <button class="filter-chip px-3 py-1 rounded-full text-sm whitespace-nowrap bg-gray-100 text-gray-700" onclick="filterByType('week')">
+                    Неделя
+                </button>
+            </div>
+            <div class="flex space-x-2">
+                <input type="text" id="searchInput" placeholder="Поиск по описанию..." class="flex-1 p-2 border border-gray-300 rounded-lg text-sm">
+                <button onclick="searchTransactions()" class="px-4 py-2 bg-purple-500 text-white rounded-lg text-sm">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="p-4">
+        <div class="max-w-md mx-auto">
+            <div class="grid grid-cols-2 gap-3 mb-4">
+                <div class="bg-white rounded-xl p-4 shadow-sm">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-green-500 text-xs font-medium">ПРИХОДЫ</span>
+                        <i class="fas fa-arrow-up text-green-500"></i>
+                    </div>
+                    <div class="text-xl font-bold text-gray-800" id="filterIncome">₽0</div>
+                    <div class="text-xs text-gray-500 mt-1" id="filterIncomeCount">0 операций</div>
+                </div>
+                
+                <div class="bg-white rounded-xl p-4 shadow-sm">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-red-500 text-xs font-medium">РАСХОДЫ</span>
+                        <i class="fas fa-arrow-down text-red-500"></i>
+                    </div>
+                    <div class="text-xl font-bold text-gray-800" id="filterExpense">₽0</div>
+                    <div class="text-xs text-gray-500 mt-1" id="filterExpenseCount">0 операций</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading State -->
+    <div id="loadingState" class="max-w-md mx-auto pb-20 px-4">
+        <div class="bg-white rounded-xl shadow-sm p-8 text-center">
+            <div class="loading-spinner mx-auto mb-4"></div>
+            <div class="text-gray-600">Загрузка операций...</div>
+        </div>
+    </div>
+
+    <!-- Transactions List -->
+    <main class="max-w-md mx-auto pb-20 px-4" id="transactionsMain" style="display: none;">
+        <div class="bg-white rounded-xl shadow-sm">
+            <div id="transactionsList" class="divide-y divide-gray-50">
+                <!-- Transactions will be loaded here -->
+            </div>
+            <div id="loadingMore" class="p-4 text-center text-gray-500 hidden">
+                <i class="fas fa-spinner fa-spin mr-2"></i>Загрузка...
+            </div>
+        </div>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="fixed bottom-0 left-0 right-0 bottom-nav z-50">
+        <div class="max-w-md mx-auto px-4">
+            <div class="flex justify-around py-2">
+                <button class="nav-item flex flex-col items-center py-2 px-3" onclick="switchTab('dashboard')">
+                    <i class="fas fa-home text-lg mb-1"></i>
+                    <span class="text-xs">Главная</span>
+                </button>
+                <button class="nav-item active flex flex-col items-center py-2 px-3" onclick="switchTab('transactions')">
+                    <i class="fas fa-exchange-alt text-lg mb-1"></i>
+                    <span class="text-xs">Операции</span>
+                </button>
+                <button class="nav-item flex flex-col items-center py-2 px-3" onclick="switchTab('analytics')">
+                    <i class="fas fa-chart-bar text-lg mb-1"></i>
+                    <span class="text-xs">Аналитика</span>
+                </button>
+                <button class="nav-item flex flex-col items-center py-2 px-3" onclick="switchTab('settings')">
+                    <i class="fas fa-cog text-lg mb-1"></i>
+                    <span class="text-xs">Настройки</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Transaction Detail Modal -->
+    <div id="transactionModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-xl max-w-md w-full p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold">Детали операции</h3>
+                    <button onclick="closeTransactionModal()" class="text-gray-500">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <div id="transactionDetails" class="space-y-3">
+                    <!-- Transaction details will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let transactions = [];
+        let filteredTransactions = [];
+        let currentFilter = 'all';
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            loadTransactions();
+            startAutoRefresh();
+        });
+
+        async function loadTransactions() {
+            try {
+                const response = await fetch('/api/transactions');
+                const data = await response.json();
+                
+                if (data.success) {
+                    transactions = data.data;
+                    filteredTransactions = [...transactions];
+                    updateTransactionSummary();
+                    renderTransactions();
+                    
+                    // Hide loading state, show main content
+                    document.getElementById('loadingState').style.display = 'none';
+                    document.getElementById('transactionsMain').style.display = 'block';
+                } else {
+                    console.error('Error loading transactions:', data.error);
+                    showError('Ошибка загрузки данных');
+                }
+            } catch (error) {
+                console.error('Error loading transactions:', error);
+                showError('Ошибка подключения к серверу');
+            }
+        }
+
+        // Auto-refresh function for real-time updates
+        function startAutoRefresh() {
+            // Auto refresh every 3 seconds for more responsive updates
+            setInterval(() => {
+                loadTransactions();
+            }, 3000);
+        }
+
+        function updateTransactionSummary() {
+            const totalIncome = filteredTransactions
+                .filter(t => t.type === 'income')
+                .reduce((sum, t) => sum + t.amount, 0);
+            
+            const totalExpense = filteredTransactions
+                .filter(t => t.type === 'expense')
+                .reduce((sum, t) => sum + t.amount, 0);
+            
+            const incomeEl = document.getElementById('filterIncome');
+            const expenseEl = document.getElementById('filterExpense');
+            const incomeCountEl = document.getElementById('filterIncomeCount');
+            const expenseCountEl = document.getElementById('filterExpenseCount');
+            const countHeaderEl = document.getElementById('transactionCountHeader');
+            
+            if (incomeEl) incomeEl.textContent = formatCurrency(totalIncome);
+            if (expenseEl) expenseEl.textContent = formatCurrency(totalExpense);
+            if (incomeCountEl) incomeCountEl.textContent = `${filteredTransactions.filter(t => t.type === 'income').length} операций`;
+            if (expenseCountEl) expenseCountEl.textContent = `${filteredTransactions.filter(t => t.type === 'expense').length} операций`;
+            if (countHeaderEl) countHeaderEl.textContent = `${filteredTransactions.length} операций`;
+        }
+
+        function renderTransactions() {
+            const container = document.getElementById('transactionsList');
+            if (!container) return;
+            
+            if (filteredTransactions.length === 0) {
+                container.innerHTML = `
+                    <div class="p-8 text-center text-gray-500">
+                        <i class="fas fa-inbox text-4xl mb-3 opacity-50"></i>
+                        <div class="text-sm">Нет транзакций</div>
+                        <div class="text-xs mt-2">Проверьте настройки Telegram API</div>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = filteredTransactions
+                .sort((a, b) => new Date(b.date) - new Date(a.date))
+                .map(transaction => `
+                    <div class="transaction-item p-4 cursor-pointer" onclick="showTransactionDetail('${transaction.id}')">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-12 h-12 rounded-full flex items-center justify-center ${transaction.type === 'income' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}">
+                                    <i class="fas ${transaction.type === 'income' ? 'fa-arrow-up' : 'fa-arrow-down'}"></i>
+                                </div>
+                                <div>
+                                    <div class="font-medium text-gray-800">${transaction.description || 'Без описания'}</div>
+                                    <div class="text-sm text-gray-500">${formatDate(transaction.date)} • ${transaction.category || 'Другое'}</div>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="font-bold text-lg ${transaction.type === 'income' ? 'text-green-600' : 'text-red-600'}">
+                                    ${transaction.type === 'income' ? '+' : '-'}${formatCurrency(transaction.amount)}
+                                </div>
+                                <div class="text-xs text-gray-500">${transaction.group_name || 'Неизвестная группа'}</div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+        }
+
+        // Utility functions
+        function formatCurrency(amount) {
+            return `₽${amount.toLocaleString('ru-RU', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
+        }
+
+        function formatDate(date) {
+            const d = new Date(date);
+            const now = new Date();
+            
+            // Убираем время для корректного сравнения дат
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const transactionDate = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+            
+            // Вычисляем разницу в миллисекундах и переводим в дни
+            const diffTime = Math.abs(today - transactionDate);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            // Сравниваем даты
+            if (transactionDate.getTime() === today.getTime()) return 'Сегодня';
+            if (transactionDate.getTime() === today.getTime() - (1000 * 60 * 60 * 24)) return 'Вчера';
+            if (diffDays <= 7) return `${diffDays} дн. назад`;
+            
+            return d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
+        }
+
+        // Event handlers
+        function switchTab(tab) {
+            const pages = {
+                'dashboard': 'index.html',
+                'transactions': 'transactions.html',
+                'analytics': 'analytics.html',
+                'settings': 'settings.html'
+            };
+            
+            if (pages[tab]) {
+                window.location.href = pages[tab];
+            }
+        }
+
+        function goBack() {
+            window.history.back();
+        }
+
+        function toggleFilters() {
+            const filterBar = document.getElementById('filterBar');
+            if (filterBar) {
+                filterBar.classList.toggle('hidden');
+            }
+        }
+
+        function filterByType(type) {
+            currentFilter = type;
+            
+            // Update filter buttons
+            document.querySelectorAll('.filter-chip').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Filter transactions
+            const now = new Date();
+            let startDate;
+            
+            switch (type) {
+                case 'income':
+                    filteredTransactions = transactions.filter(t => t.type === 'income');
+                    break;
+                case 'expense':
+                    filteredTransactions = transactions.filter(t => t.type === 'expense');
+                    break;
+                case 'today':
+                    startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                    filteredTransactions = transactions.filter(t => new Date(t.date) >= startDate);
+                    break;
+                case 'week':
+                    startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+                    filteredTransactions = transactions.filter(t => new Date(t.date) >= startDate);
+                    break;
+                default:
+                    filteredTransactions = [...transactions];
+            }
+            
+            updateTransactionSummary();
+            renderTransactions();
+        }
+
+        function searchTransactions() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            
+            if (searchTerm) {
+                filteredTransactions = transactions.filter(t => 
+                    (t.description && t.description.toLowerCase().includes(searchTerm)) ||
+                    (t.category && t.category.toLowerCase().includes(searchTerm))
+                );
+            } else {
+                filteredTransactions = [...transactions];
+            }
+            
+            updateTransactionSummary();
+            renderTransactions();
+        }
+
+        function showTransactionDetail(transactionId) {
+            const transaction = transactions.find(t => t.id === transactionId);
+            if (!transaction) return;
+            
+            const modal = document.getElementById('transactionModal');
+            const detailsEl = document.getElementById('transactionDetails');
+            
+            if (modal && detailsEl) {
+                detailsEl.innerHTML = `
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <span class="text-sm text-gray-600">Сумма</span>
+                            <span class="font-bold ${transaction.type === 'income' ? 'text-green-600' : 'text-red-600'}">
+                                ${transaction.type === 'income' ? '+' : '-'}${formatCurrency(transaction.amount)}
+                            </span>
+                        </div>
+                        
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <span class="text-sm text-gray-600">Тип</span>
+                            <span class="text-sm font-medium">
+                                ${transaction.type === 'income' ? 'Приход' : 'Расход'}
+                            </span>
+                        </div>
+                        
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <span class="text-sm text-gray-600">Категория</span>
+                            <span class="text-sm font-medium">${transaction.category || 'Другое'}</span>
+                        </div>
+                        
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <span class="text-sm text-gray-600">Дата</span>
+                            <span class="text-sm font-medium">${formatDate(transaction.date)}</span>
+                        </div>
+                        
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <span class="text-sm text-gray-600">Группа</span>
+                            <span class="text-sm font-medium">${transaction.group_name || 'Неизвестная группа'}</span>
+                        </div>
+                        
+                        ${transaction.description ? `
+                        <div class="p-3 bg-gray-50 rounded-lg">
+                            <div class="text-sm text-gray-600 mb-1">Описание</div>
+                            <div class="text-sm font-medium">${transaction.description}</div>
+                        </div>
+                        ` : ''}
+                    </div>
+                `;
+                
+                modal.classList.remove('hidden');
+            }
+        }
+
+        function closeTransactionModal() {
+            const modal = document.getElementById('transactionModal');
+            if (modal) {
+                modal.classList.add('hidden');
+            }
+        }
+
+        async function forceUpdate() {
+            try {
+                showNotification('Обновление запущено...', 'info');
+                
+                // Immediately trigger data update on server
+                const response = await fetch('/api/update', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Load updated data immediately
+                    await loadTransactions();
+                    showNotification('Данные обновлены', 'success');
+                } else {
+                    showNotification('Ошибка обновления: ' + (data.message || data.error), 'error');
+                }
+            } catch (error) {
+                console.error('Error forcing update:', error);
+                showNotification('Ошибка при обновлении', 'error');
+            }
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 z-50 p-4 rounded-lg text-white ${
+                type === 'success' ? 'bg-green-500' : 
+                type === 'error' ? 'bg-red-500' : 
+                type === 'warning' ? 'bg-yellow-500' :
+                'bg-blue-500'
+            }`;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        function showError(message) {
+            document.getElementById('loadingState').style.display = 'none';
+            const container = document.getElementById('transactionsList');
+            if (container) {
+                container.innerHTML = `
+                    <div class="p-8 text-center text-red-500">
+                        <i class="fas fa-exclamation-circle text-4xl mb-3"></i>
+                        <div class="text-sm">${message}</div>
+                    </div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

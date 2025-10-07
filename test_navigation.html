@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест навигации</title>
+</head>
+<body>
+    <h1>Тест навигации между страницами</h1>
+    
+    <div>
+        <button onclick="testNavigation('dashboard')">Главная</button>
+        <button onclick="testNavigation('transactions')">Операции</button>
+        <button onclick="testNavigation('analytics')">Аналитика</button>
+        <button onclick="testNavigation('settings')">Настройки</button>
+    </div>
+    
+    <div id="result" style="margin-top: 20px; padding: 10px; border: 1px solid #ccc;">
+        Результаты теста будут здесь...
+    </div>
+    
+    <script>
+        function testNavigation(tab) {
+            const pages = {
+                'dashboard': 'index.html',
+                'transactions': 'transactions.html',
+                'analytics': 'analytics.html',
+                'settings': 'settings.html'
+            };
+            
+            const resultDiv = document.getElementById('result');
+            
+            if (pages[tab]) {
+                resultDiv.innerHTML = `Попытка перехода на: ${tab} (${pages[tab]})<br>`;
+                resultDiv.innerHTML += `Текущий URL: ${window.location.href}<br>`;
+                resultDiv.innerHTML += `Новый URL будет: ${pages[tab]}<br>`;
+                
+                // Проверим, существует ли файл
+                fetch(pages[tab])
+                    .then(response => {
+                        if (response.ok) {
+                            resultDiv.innerHTML += `<span style="color: green;">✓ Файл ${pages[tab]} доступен</span><br>`;
+                        } else {
+                            resultDiv.innerHTML += `<span style="color: red;">✗ Файл ${pages[tab]} недоступен (статус: ${response.status})</span><br>`;
+                        }
+                    })
+                    .catch(error => {
+                        resultDiv.innerHTML += `<span style="color: red;">✗ Ошибка при проверке файла ${pages[tab]}: ${error}</span><br>`;
+                    });
+            } else {
+                resultDiv.innerHTML = `Неизвестная страница: ${tab}`;
+            }
+        }
+    </script>
+</body>
+</html>

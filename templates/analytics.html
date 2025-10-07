@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Аналитика - Telegram Финансовый Агент</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/3.0.3/plotly.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .bottom-nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        .nav-item {
+            transition: all 0.2s ease;
+        }
+        .nav-item.active {
+            color: #667eea;
+        }
+        .nav-item:not(.active):hover {
+            color: #764ba2;
+        }
+        .chart-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        .stat-card {
+            transition: all 0.2s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        .period-btn {
+            transition: all 0.2s ease;
+        }
+        .period-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .loading-spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <!-- Header -->
+    <header class="gradient-bg text-white p-4 sticky top-0 z-40">
+        <div class="flex items-center justify-between max-w-md mx-auto">
+            <div class="flex items-center space-x-3">
+                <button onclick="goBack()" class="w-10 h-10 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <div>
+                    <h1 class="font-bold text-lg">Аналитика</h1>
+                    <p class="text-xs opacity-80">Финансовая статистика</p>
+                </div>
+            </div>
+            <div class="flex space-x-2">
+                <button class="w-10 h-10 bg-white bg-opacity-20 rounded-lg flex items-center justify-center" onclick="forceUpdate()">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+                <button class="w-10 h-10 bg-white bg-opacity-20 rounded-lg flex items-center justify-center" onclick="exportData()">
+                    <i class="fas fa-download"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Loading State -->
+    <div id="loadingState" class="max-w-md mx-auto p-4">
+        <div class="bg-white rounded-xl shadow-sm p-8 text-center">
+            <div class="loading-spinner mx-auto mb-4"></div>
+            <div class="text-gray-600">Загрузка аналитики...</div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="max-w-md mx-auto pb-20 px-4" id="mainContent" style="display: none;">
+        <!-- Period Selector -->
+        <div class="p-4">
+            <div class="flex space-x-2 overflow-x-auto">
+                <button class="period-btn px-4 py-2 rounded-full text-sm whitespace-nowrap bg-purple-500 text-white" onclick="changePeriod('week')">
+                    Неделя
+                </button>
+                <button class="period-btn px-4 py-2 rounded-full text-sm whitespace-nowrap bg-gray-200 text-gray-700" onclick="changePeriod('month')">
+                    Месяц
+                </button>
+                <button class="period-btn px-4 py-2 rounded-full text-sm whitespace-nowrap bg-gray-200 text-gray-700" onclick="changePeriod('quarter')">
+                    Квартал
+                </button>
+                <button class="period-btn px-4 py-2 rounded-full text-sm whitespace-nowrap bg-gray-200 text-gray-700" onclick="changePeriod('year')">
+                    Год
+                </button>
+            </div>
+        </div>
+
+        <!-- Key Metrics -->
+        <div class="grid grid-cols-2 gap-3 mb-6">
+            <div class="stat-card bg-white rounded-xl p-4 shadow-sm">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-green-500 text-xs font-medium">ДОХОД</span>
+                    <i class="fas fa-trending-up text-green-500"></i>
+                </div>
+                <div class="text-xl font-bold text-gray-800" id="periodIncome">₽0</div>
+                <div class="text-xs text-green-500 mt-1" id="incomeChange">+0%</div>
+            </div>
+            
+            <div class="stat-card bg-white rounded-xl p-4 shadow-sm">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-red-500 text-xs font-medium">РАСХОД</span>
+                    <i class="fas fa-trending-down text-red-500"></i>
+                </div>
+                <div class="text-xl font-bold text-gray-800" id="periodExpense">₽0</div>
+                <div class="text-xs text-red-500 mt-1" id="expenseChange">+0%</div>
+            </div>
+        </div>
+
+        <!-- Balance Trend Chart -->
+        <div class="chart-container p-4 mb-6">
+            <h3 class="font-semibold text-gray-800 mb-3 flex items-center">
+                <i class="fas fa-chart-line text-purple-500 mr-2"></i>
+                Динамика баланса
+            </h3>
+            <div id="balanceChart" style="height: 200px;"></div>
+        </div>
+
+        <!-- Category Distribution -->
+        <div class="chart-container p-4 mb-6">
+            <h3 class="font-semibold text-gray-800 mb-3 flex items-center">
+                <i class="fas fa-chart-pie text-purple-500 mr-2"></i>
+                Распределение по категориям
+            </h3>
+            <div id="categoryChart" style="height: 200px;"></div>
+        </div>
+
+        <!-- Monthly Comparison -->
+        <div class="chart-container p-4 mb-6">
+            <h3 class="font-semibold text-gray-800 mb-3 flex items-center">
+                <i class="fas fa-chart-bar text-purple-500 mr-2"></i>
+                Сравнение месяцев
+            </h3>
+            <div id="monthlyChart" style="height: 200px;"></div>
+        </div>
+
+        <!-- Top Categories -->
+        <div class="bg-white rounded-xl shadow-sm p-4 mb-6">
+            <h3 class="font-semibold text-gray-800 mb-3 flex items-center">
+                <i class="fas fa-list text-purple-500 mr-2"></i>
+                Топ категорий
+            </h3>
+            <div id="topCategories" class="space-y-3">
+                <!-- Categories will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Financial Health Score -->
+        <div class="bg-gradient-to-r from-green-400 to-blue-500 rounded-xl p-4 text-white mb-6">
+            <div class="flex items-center justify-between mb-2">
+                <h3 class="font-semibold">Финансовое здоровье</h3>
+                <i class="fas fa-heartbeat text-xl"></i>
+            </div>
+            <div class="text-3xl font-bold mb-1" id="healthScore">85</div>
+            <div class="text-sm opacity-80">Хорошее состояние</div>
+            <div class="w-full bg-white bg-opacity-20 rounded-full h-2 mt-3">
+                <div class="bg-white h-2 rounded-full" style="width: 85%"></div>
+            </div>
+        </div>
+
+        <!-- Insights -->
+        <div class="bg-white rounded-xl shadow-sm p-4 mb-6">
+            <h3 class="font-semibold text-gray-800 mb-3 flex items-center">
+                <i class="fas fa-lightbulb text-yellow-500 mr-2"></i>
+                Инсайты
+            </h3>
+            <div id="insights" class="space-y-3">
+                <!-- Insights will be loaded here -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="fixed bottom-0 left-0 right-0 bottom-nav z-50">
+        <div class="max-w-md mx-auto px-4">
+            <div class="flex justify-around py-2">
+                <button class="nav-item flex flex-col items-center py-2 px-3" onclick="switchTab('dashboard')">
+                    <i class="fas fa-home text-lg mb-1"></i>
+                    <span class="text-xs">Главная</span>
+                </button>
+                <button class="nav-item flex flex-col items-center py-2 px-3" onclick="switchTab('transactions')">
+                    <i class="fas fa-exchange-alt text-lg mb-1"></i>
+                    <span class="text-xs">Операции</span>
+                </button>
+                <button class="nav-item active flex flex-col items-center py-2 px-3" onclick="switchTab('analytics')">
+                    <i class="fas fa-chart-bar text-lg mb-1"></i>
+                    <span class="text-xs">Аналитика</span>
+                </button>
+                <button class="nav-item flex flex-col items-center py-2 px-3" onclick="switchTab('settings')">
+                    <i class="fas fa-cog text-lg mb-1"></i>
+                    <span class="text-xs">Настройки</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <script>
+        // Global variables
+        let transactions = [];
+        let currentPeriod = 'week';
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            loadTransactions();
+            startAutoRefresh();
+        });
+
+        async function loadTransactions() {
+            try {
+                const response = await fetch('/api/transactions');
+                const data = await response.json();
+                
+                if (data.success) {
+                    transactions = data.data;
+                    initializeAnalytics();
+                    
+                    // Hide loading state, show main content
+                    document.getElementById('loadingState').style.display = 'none';
+                    document.getElementById('mainContent').style.display = 'block';
+                } else {
+                    console.error('Error loading transactions:', data.error);
+                    showError('Ошибка загрузки данных');
+                }
+            } catch (error) {
+                console.error('Error loading transactions:', error);
+                showError('Ошибка подключения к серверу');
+            }
+        }
+
+        // Auto-refresh function for real-time updates
+        function startAutoRefresh() {
+            // Auto refresh every 3 seconds for more responsive updates
+            setInterval(() => {
+                loadTransactions();
+            }, 3000);
+        }
+
+        function initializeAnalytics() {
+            updateAnalyticsMetrics();
+            updateBalanceChart();
+            updateCategoryChart();
+            updateMonthlyChart();
+            updateTopCategories();
+            updateInsights();
+        }
+
+        function updateAnalyticsMetrics() {
+            const periodData = getTransactionsForPeriod(currentPeriod);
+            
+            const totalIncome = periodData
+                .filter(t => t.type === 'income')
+                .reduce((sum, t) => sum + t.amount, 0);
+            
+            const totalExpense = periodData
+                .filter(t => t.type === 'expense')
+                .reduce((sum, t) => sum + t.amount, 0);
+            
+            const incomeEl = document.getElementById('periodIncome');
+            const expenseEl = document.getElementById('periodExpense');
+            const incomeChangeEl = document.getElementById('incomeChange');
+            const expenseChangeEl = document.getElementById('expenseChange');
+            
+            if (incomeEl) incomeEl.textContent = formatCurrency(totalIncome);
+            if (expenseEl) expenseEl.textContent = formatCurrency(totalExpense);
+            
+            // Calculate changes (mock data for demo)
+            if (incomeChangeEl) incomeChangeEl.textContent = '+12.5%';
+            if (expenseChangeEl) expenseChangeEl.textContent = '-3.2%';
+        }
+
+        function updateBalanceChart() {
+            const chartEl = document.getElementById('balanceChart');
+            if (!chartEl || transactions.length === 0) return;
+            
+            const periodData = getTransactionsForPeriod(currentPeriod);
+            const dailyBalance = calculateDailyBalance(periodData);
+            
+            const data = [{
+                x: dailyBalance.dates,
+                y: dailyBalance.balances,
+                type: 'scatter',
+                mode: 'lines',
+                fill: 'tonexty',
+                fillcolor: 'rgba(102, 126, 234, 0.1)',
+                line: { color: '#667eea', width: 2 }
+            }];
+            
+            const layout = {
+                margin: { l: 40, r: 20, t: 20, b: 40 },
+                showlegend: false,
+                xaxis: { showgrid: false, showline: false },
+                yaxis: { showgrid: true, gridcolor: '#f3f4f6' },
+                plot_bgcolor: 'rgba(0,0,0,0)',
+                paper_bgcolor: 'rgba(0,0,0,0)'
+            };
+            
+            Plotly.newPlot(chartEl, data, layout, { displayModeBar: false, responsive: true });
+        }
+
+        function updateCategoryChart() {
+            const chartEl = document.getElementById('categoryChart');
+            if (!chartEl || transactions.length === 0) return;
+            
+            const categories = getCategoryData();
+            
+            const data = [{
+                values: categories.map(c => c.amount),
+                labels: categories.map(c => c.name),
+                type: 'pie',
+                hole: 0.4,
+                marker: {
+                    colors: ['#667eea', '#764ba2', '#f093fb', '#f5576c', '#4facfe', '#00f2fe']
+                }
+            }];
+            
+            const layout = {
+                margin: { l: 20, r: 20, t: 20, b: 20 },
+                showlegend: true,
+                legend: { orientation: 'h', x: 0, y: -0.1 },
+                plot_bgcolor: 'rgba(0,0,0,0)',
+                paper_bgcolor: 'rgba(0,0,0,0)'
+            };
+            
+            Plotly.newPlot(chartEl, data, layout, { displayModeBar: false, responsive: true });
+        }
+
+        function updateMonthlyChart() {
+            const chartEl = document.getElementById('monthlyChart');
+            if (!chartEl || transactions.length === 0) return;
+            
+            const monthlyData = getMonthlyData();
+            
+            const data = [
+                {
+                    x: monthlyData.months,
+                    y: monthlyData.income,
+                    type: 'bar',
+                    name: 'Приходы',
+                    marker: { color: '#10b981' }
+                },
+                {
+                    x: monthlyData.months,
+                    y: monthlyData.expense.map(e => -e),
+                    type: 'bar',
+                    name: 'Расходы',
+                    marker: { color: '#ef4444' }
+                }
+            ];
+            
+            const layout = {
+                margin: { l: 40, r: 20, t: 20, b: 40 },
+                showlegend: true,
+                legend: { orientation: 'h', x: 0, y: 1.1 },
+                xaxis: { showgrid: false },
+                yaxis: { showgrid: true, gridcolor: '#f3f4f6' },
+                plot_bgcolor: 'rgba(0,0,0,0)',
+                paper_bgcolor: 'rgba(0,0,0,0)',
+                barmode: 'relative'
+            };
+            
+            Plotly.newPlot(chartEl, data, layout, { displayModeBar: false, responsive: true });
+        }
+
+        function updateTopCategories() {
+            const container = document.getElementById('topCategories');
+            if (!container || transactions.length === 0) return;
+            
+            const categories = getCategoryData().slice(0, 5);
+            
+            container.innerHTML = categories.map((category, index) => `
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold" style="background: ${['#667eea', '#764ba2', '#f093fb', '#f5576c', '#4facfe'][index]}">
+                            ${index + 1}
+                        </div>
+                        <div>
+                            <div class="font-medium text-sm">${category.name}</div>
+                            <div class="text-xs text-gray-500">${category.count} операций</div>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div class="font-semibold text-gray-800">${formatCurrency(category.amount)}</div>
+                        <div class="text-xs text-gray-500">${((category.amount / categories.reduce((sum, c) => sum + c.amount, 0)) * 100).toFixed(1)}%</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateInsights() {
+            const container = document.getElementById('insights');
+            if (!container || transactions.length === 0) return;
+            
+            const insights = generateInsights();
+            
+            container.innerHTML = insights.map(insight => `
+                <div class="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg">
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center ${insight.type === 'positive' ? 'bg-green-100 text-green-600' : insight.type === 'negative' ? 'bg-red-100 text-red-600' : 'bg-blue-100 text-blue-600'}">
+                        <i class="fas ${insight.icon} text-sm"></i>
+                    </div>
+                    <div class="flex-1">
+                        <div class="font-medium text-sm">${insight.title}</div>
+                        <div class="text-xs text-gray-600 mt-1">${insight.description}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Utility functions
+        function formatCurrency(amount) {
+            return `₽${amount.toLocaleString('ru-RU', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
+        }
+
+        function getTransactionsForPeriod(period) {
+            const now = new Date();
+            let startDate;
+            
+            switch (period) {
+                case 'week':
+                    startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+                    break;
+                case 'month':
+                    startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+                    break;
+                case 'quarter':
+                    startDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
+                    break;
+                case 'year':
+                    startDate = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
+                    break;
+                default:
+                    startDate = new Date(0);
+            }
+            
+            return transactions.filter(t => new Date(t.date) >= startDate);
+        }
+
+        function calculateDailyBalance(transactions) {
+            const dailyData = groupTransactionsByDay(transactions);
+            const dates = Object.keys(dailyData).sort();
+            const balances = [];
+            let runningBalance = 0;
+            
+            dates.forEach(date => {
+                runningBalance += (dailyData[date].income || 0) - (dailyData[date].expense || 0);
+                balances.push(runningBalance);
+            });
+            
+            return { dates, balances };
+        }
+
+        function groupTransactionsByDay(transactions) {
+            const grouped = {};
+            
+            transactions.forEach(transaction => {
+                const date = new Date(transaction.date).toISOString().split('T')[0];
+                if (!grouped[date]) {
+                    grouped[date] = { income: 0, expense: 0 };
+                }
+                
+                if (transaction.type === 'income') {
+                    grouped[date].income += transaction.amount;
+                } else {
+                    grouped[date].expense += transaction.amount;
+                }
+            });
+            
+            return grouped;
+        }
+
+        function getCategoryData() {
+            const categories = {};
+            
+            transactions.forEach(transaction => {
+                const category = transaction.category || 'Другое';
+                if (!categories[category]) {
+                    categories[category] = { name: category, amount: 0, count: 0 };
+                }
+                categories[category].amount += transaction.amount;
+                categories[category].count += 1;
+            });
+            
+            return Object.values(categories)
+                .sort((a, b) => b.amount - a.amount);
+        }
+
+        function getMonthlyData() {
+            const monthlyData = {};
+            
+            transactions.forEach(transaction => {
+                const month = new Date(transaction.date).toISOString().slice(0, 7);
+                if (!monthlyData[month]) {
+                    monthlyData[month] = { income: 0, expense: 0 };
+                }
+                
+                if (transaction.type === 'income') {
+                    monthlyData[month].income += transaction.amount;
+                } else {
+                    monthlyData[month].expense += transaction.amount;
+                }
+            });
+            
+            const months = Object.keys(monthlyData).sort().slice(-6);
+            const income = months.map(month => monthlyData[month].income);
+            const expense = months.map(month => monthlyData[month].expense);
+            
+            return { months, income, expense };
+        }
+
+        function generateInsights() {
+            const totalIncome = transactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
+            const totalExpense = transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0);
+            const savingsRate = totalIncome > 0 ? ((totalIncome - totalExpense) / totalIncome * 100).toFixed(1) : 0;
+            
+            const insights = [
+                {
+                    type: 'positive',
+                    icon: 'fa-piggy-bank',
+                    title: 'Хорошая экономия',
+                    description: `Вы откладываете ${savingsRate}% от доходов`
+                },
+                {
+                    type: 'info',
+                    icon: 'fa-chart-line',
+                    title: 'Рост доходов',
+                    description: 'Ваши доходы выросли на 15% за последний месяц'
+                },
+                {
+                    type: 'warning',
+                    icon: 'fa-exclamation-triangle',
+                    title: 'Контроль расходов',
+                    description: 'Рассмотрите возможность сокращения расходов на развлечения'
+                }
+            ];
+            
+            return insights;
+        }
+
+        // Event handlers
+        function switchTab(tab) {
+            const pages = {
+                'dashboard': 'index.html',
+                'transactions': 'transactions.html',
+                'analytics': 'analytics.html',
+                'settings': 'settings.html'
+            };
+            
+            if (pages[tab]) {
+                window.location.href = pages[tab];
+            }
+        }
+
+        function goBack() {
+            window.history.back();
+        }
+
+        function changePeriod(period) {
+            currentPeriod = period;
+            
+            // Update period buttons
+            document.querySelectorAll('.period-btn').forEach(btn => {
+                btn.classList.remove('bg-purple-500', 'text-white');
+                btn.classList.add('bg-gray-200', 'text-gray-700');
+            });
+            event.target.classList.remove('bg-gray-200', 'text-gray-700');
+            event.target.classList.add('bg-purple-500', 'text-white');
+            
+            updateAnalyticsMetrics();
+            updateBalanceChart();
+            updateMonthlyChart();
+        }
+
+        function exportData() {
+            const dataStr = JSON.stringify(transactions, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `financial_analytics_${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            
+            showNotification('Данные экспортированы', 'success');
+        }
+
+        async function forceUpdate() {
+            try {
+                const response = await fetch('/api/update', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showNotification('Обновление запущено...', 'info');
+                    // Periodically check if update is complete and reload data
+                    const checkInterval = setInterval(async () => {
+                        try {
+                            const statusResponse = await fetch('/api/status');
+                            const statusData = await statusResponse.json();
+                            
+                            if (statusData.success && !statusData.data.is_parsing) {
+                                // Update is complete, reload data
+                                clearInterval(checkInterval);
+                                await loadTransactions();
+                                showNotification('Данные обновлены', 'success');
+                            }
+                        } catch (error) {
+                            console.error('Error checking update status:', error);
+                            clearInterval(checkInterval);
+                        }
+                    }, 2000); // Check every 2 seconds
+                    
+                    // Set a timeout to stop checking after 30 seconds
+                    setTimeout(() => {
+                        clearInterval(checkInterval);
+                    }, 30000);
+                } else {
+                    showNotification('Обновление уже выполняется', 'warning');
+                }
+            } catch (error) {
+                console.error('Error forcing update:', error);
+                showNotification('Ошибка при обновлении', 'error');
+            }
+        }
+
+        function showError(message) {
+            document.getElementById('loadingState').style.display = 'none';
+            const container = document.getElementById('insights');
+            if (container) {
+                container.innerHTML = `
+                    <div class="p-8 text-center text-red-500">
+                        <i class="fas fa-exclamation-circle text-4xl mb-3"></i>
+                        <div class="text-sm">${message}</div>
+                    </div>
+                `;
+            }
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 z-50 p-4 rounded-lg text-white ${
+                type === 'success' ? 'bg-green-500' : 
+                type === 'error' ? 'bg-red-500' : 
+                'bg-blue-500'
+            }`;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
