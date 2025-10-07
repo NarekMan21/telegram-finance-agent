@@ -1,6 +1,160 @@
 {
   "income": [
     {
+      "id": "61772",
+      "timestamp": "2025-10-07T09:11:16+00:00",
+      "group_id": "-4731002756",
+      "group_title": "РАСХОД",
+      "text": "14 Ютк 17452",
+      "sender_id": 0,
+      "amount": 17452.0,
+      "currency": "RUB",
+      "description": "14 ютк 17452"
+    },
+    {
+      "id": "61771",
+      "timestamp": "2025-10-07T09:02:52+00:00",
+      "group_id": "-4731002756",
+      "group_title": "РАСХОД",
+      "text": "13 Авито 2000",
+      "sender_id": 0,
+      "amount": 2000.0,
+      "currency": "RUB",
+      "description": "13 авито 2000"
+    },
+    {
+      "id": "61770",
+      "timestamp": "2025-10-07T08:58:03+00:00",
+      "group_id": "-4731002756",
+      "group_title": "РАСХОД",
+      "text": "12 Авито 323",
+      "sender_id": 0,
+      "amount": 323.0,
+      "currency": "RUB",
+      "description": "12 авито 323"
+    },
+    {
+      "id": "61766",
+      "timestamp": "2025-10-07T08:06:10+00:00",
+      "group_id": "-4731002756",
+      "group_title": "РАСХОД",
+      "text": "11 Яндекс елама 20029",
+      "sender_id": 0,
+      "amount": 20029.0,
+      "currency": "RUB",
+      "description": "11 яндекс елама 20029"
+    },
+    {
+      "id": "61765",
+      "timestamp": "2025-10-07T08:04:28+00:00",
+      "group_id": "-4731002756",
+      "group_title": "РАСХОД",
+      "text": "10 Авито 908",
+      "sender_id": 0,
+      "amount": 908.0,
+      "currency": "RUB",
+      "description": "10 авито 908"
+    },
+    {
+      "id": "61763",
+      "timestamp": "2025-10-07T07:48:08+00:00",
+      "group_id": "-4731002756",
+      "group_title": "РАСХОД",
+      "text": "9 нарек 10000",
+      "sender_id": 0,
+      "amount": 10000.0,
+      "currency": "RUB",
+      "description": "9 нарек 10000"
+    },
+    {
+      "id": "61754",
+      "timestamp": "2025-10-06T13:00:41+00:00",
+      "group_id": "-4731002756",
+      "group_title": "РАСХОД",
+      "text": "8 Ютк Сергей 24649",
+      "sender_id": 0,
+      "amount": 24649.0,
+      "currency": "RUB",
+      "description": "8 ютк сергей 24649"
+    },
+    {
+      "id": "61750",
+      "timestamp": "2025-10-06T12:22:45+00:00",
+      "group_id": "-4731002756",
+      "group_title": "РАСХОД",
+      "text": "7 гев долг 10000",
+      "sender_id": 0,
+      "amount": 10000.0,
+      "currency": "RUB",
+      "description": "7 гев долг 10000"
+    },
+    {
+      "id": "61744",
+      "timestamp": "2025-10-06T09:05:33+00:00",
+      "group_id": "-4731002756",
+      "group_title": "РАСХОД",
+      "text": "6 арбен доставка 800",
+      "sender_id": 0,
+      "amount": 800.0,
+      "currency": "RUB",
+      "description": "6 арбен доставка 800"
+    },
+    {
+      "id": "61743",
+      "timestamp": "2025-10-06T09:03:57+00:00",
+      "group_id": "-4731002756",
+      "group_title": "РАСХОД",
+      "text": "5 арбен 30318",
+      "sender_id": 0,
+      "amount": 30318.0,
+      "currency": "RUB",
+      "description": "5 арбен 30318"
+    },
+    {
+      "id": "61742",
+      "timestamp": "2025-10-06T09:02:05+00:00",
+      "group_id": "-4731002756",
+      "group_title": "РАСХОД",
+      "text": "4 Михаил реклама 15000",
+      "sender_id": 0,
+      "amount": 15000.0,
+      "currency": "RUB",
+      "description": "4 михаил реклама 15000"
+    },
+    {
+      "id": "61731",
+      "timestamp": "2025-10-06T06:37:31+00:00",
+      "group_id": "-4731002756",
+      "group_title": "РАСХОД",
+      "text": "3 Авито 907",
+      "sender_id": 0,
+      "amount": 907.0,
+      "currency": "RUB",
+      "description": "3 авито 907"
+    },
+    {
+      "id": "61724",
+      "timestamp": "2025-10-04T14:01:43+00:00",
+      "group_id": "-4731002756",
+      "group_title": "РАСХОД",
+      "text": "2 Тинькофф 2089",
+      "sender_id": 0,
+      "amount": 2089.0,
+      "currency": "RUB",
+      "description": "2 тинькофф 2089"
+    },
+    {
+      "id": "61705",
+      "timestamp": "2025-10-03T13:48:49+00:00",
+      "group_id": "-4731002756",
+      "group_title": "РАСХОД",
+      "text": "1 минус 185000",
+      "sender_id": 0,
+      "amount": 185000.0,
+      "currency": "RUB",
+      "description": "1 минус 185000"
+    },
+    {
       "id": "61768",
       "timestamp": "2025-10-07T08:41:22+00:00",
       "group_id": "-4829787389",
@@ -68,6 +222,72 @@
     }
   ],
   "expense": [
+    {
+      "id": "61768",
+      "timestamp": "2025-10-07T08:41:22+00:00",
+      "group_id": "-4829787389",
+      "group_title": "ПРИХОД",
+      "text": "6 диваны Рокс 20000",
+      "sender_id": 0,
+      "amount": 20000.0,
+      "currency": "RUB",
+      "description": "6 диваны рокс 20000"
+    },
+    {
+      "id": "61764",
+      "timestamp": "2025-10-07T07:48:42+00:00",
+      "group_id": "-4829787389",
+      "group_title": "ПРИХОД",
+      "text": "5 угловой Атлант 27000",
+      "sender_id": 0,
+      "amount": 27000.0,
+      "currency": "RUB",
+      "description": "5 угловой атлант 27000"
+    },
+    {
+      "id": "61762",
+      "timestamp": "2025-10-07T07:48:00+00:00",
+      "group_id": "-4829787389",
+      "group_title": "ПРИХОД",
+      "text": "4 угол батуринская 44000",
+      "sender_id": 0,
+      "amount": 44000.0,
+      "currency": "RUB",
+      "description": "4 угол батуринская 44000"
+    },
+    {
+      "id": "61761",
+      "timestamp": "2025-10-07T07:47:30+00:00",
+      "group_id": "-4829787389",
+      "group_title": "ПРИХОД",
+      "text": "3 диван кресло 74000",
+      "sender_id": 0,
+      "amount": 74000.0,
+      "currency": "RUB",
+      "description": "3 диван кресло 74000"
+    },
+    {
+      "id": "61748",
+      "timestamp": "2025-10-06T12:14:29+00:00",
+      "group_id": "-4829787389",
+      "group_title": "ПРИХОД",
+      "text": "2 Аслан 45000",
+      "sender_id": 0,
+      "amount": 45000.0,
+      "currency": "RUB",
+      "description": "2 аслан 45000"
+    },
+    {
+      "id": "61741",
+      "timestamp": "2025-10-06T08:56:38+00:00",
+      "group_id": "-4829787389",
+      "group_title": "ПРИХОД",
+      "text": "1 стулья институт 56000",
+      "sender_id": 0,
+      "amount": 56000.0,
+      "currency": "RUB",
+      "description": "1 стулья институт 56000"
+    },
     {
       "id": "61772",
       "timestamp": "2025-10-07T09:11:16+00:00",
@@ -223,5 +443,5 @@
       "description": "1 минус 185000"
     }
   ],
-  "last_updated": "2025-10-07T13:06:16.912799"
+  "last_updated": "2025-10-07T13:20:45.530141"
 }
