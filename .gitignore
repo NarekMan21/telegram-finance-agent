@@ -1,0 +1,10 @@
+.env
+.env.*
+*.session
+*.sqlite
+*.db
+*.pyc
+__pycache__/
+node_modules/
+.venv/
+venv/
