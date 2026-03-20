@@ -1,259 +1,48 @@
-# Telegram Финансовый Агент - Развертывание
+# telegram-finance-agent
 
-## Описание
+Telegram-based finance tracker with a lightweight web UI for reviewing income and expense messages.
 
-Telegram Финансовый Агент - это веб-приложение для отслеживания финансовых операций из Telegram групп. Приложение предоставляет удобный мобильный интерфейс для анализа доходов и расходов.
+## What this project is
+This repository is an experimental personal-finance utility built around Telegram message flows.
+It combines a Telegram parser, data extraction scripts, and a small browser interface for viewing transactions.
 
-## Особенности
+## What it does
+- Connects to Telegram using user API credentials
+- Reads messages from selected groups/chats
+- Separates income and expense streams
+- Stores parsed transactions locally
+- Exposes a lightweight web interface for browsing the data
 
-- 📱 Мобильный-first дизайн
-- 📊 Интерактивные графики и аналитика
-- 🔐 Безопасное подключение к Telegram API
-- 📈 Финансовая аналитика и инсайты
-- 🔔 Уведомления о новых операциях
-- 💾 Экспорт/импорт данных
+## Repository structure
+- `app.py` / `telegram_server.py` — local web app entry points
+- `telegram_parser.py` / `run_parser.py` — Telegram parsing flow
+- `ParserQ/` — parser utilities and data extraction helpers
+- `templates/` — web UI templates
+- `config.json` — local config template (do not commit real secrets)
 
-## Требования
+## Setup
+1. Create your Telegram API credentials at `https://my.telegram.org`
+2. Put your real values into a local config file
+3. Keep all secrets and session files out of git
 
-- Python 3.7+
-- Telegram API ID и Hash
-- Веб-браузер (Chrome, Firefox, Safari)
-- Интернет-соединение
-
-## Установка и запуск
-
-### 1. Получение Telegram API ключей
-
-Перед запуском необходимо получить API ключи:
-
-1. Перейдите на https://my.telegram.org
-2. Войдите с вашим номером телефона
-3. Выберите "API Development Tools"
-4. Создайте новое приложение
-5. Сохраните полученные `api_id` и `api_hash`
-
-### 2. Настройка конфигурации
-
-Отредактируйте `config.json`:
+Example config shape:
 
 ```json
 {
-    "api_id": ВАШ_API_ID,
-    "api_hash": "ВАШ_API_HASH",
-    "phone_number": "+79281234567",
-    "group_ids": [-1001234567890, -1000987654321],
-    "group_types": {
-        "-1001234567890": "income",
-        "-1000987654321": "expense"
-    }
+  "api_id": 123456,
+  "api_hash": "your_api_hash",
+  "phone_number": "+1234567890",
+  "group_ids": [-1001234567890, -1000987654321]
 }
 ```
 
-### 3. Получение ID групп
-
-Для получения ID групп:
-
-1. Добавьте бота @userinfobot в группу
-2. Отправьте любое сообщение в группу
-3. Бот ответит ID группы (добавьте префикс -100 для супергрупп)
-
-### 4. Запуск приложения
-
-#### Вариант A: Flask приложение (рекомендуется)
+## Run
 ```bash
-# Установите зависимости
 pip install -r requirements.txt
-
-# Запустите Flask приложение
-python app.py 8080
-
-# В отдельном терминале запустите Telegram парсер
-python run_parser.py
+python app.py
 ```
 
-#### Вариант B: Только веб-интерфейс
-```bash
-# Запустите статический сервер
-python server.py 8080
-```
-
-## Развертывание как Telegram Mini App
-
-Для развертывания приложения как Telegram Mini App следуйте инструкциям в файле [TELEGRAM_MINI_APP_DEPLOY.md](TELEGRAM_MINI_APP_DEPLOY.md).
-
-## Развертывание на GitHub
-
-Для развертывания проекта на GitHub:
-
-1. Убедитесь, что Git установлен на вашем компьютере
-2. Запустите скрипт развертывания:
-   ```bash
-   python deploy_to_github.py
-   ```
-   
-   Или используйте bat-файл:
-   ```bash
-   deploy_to_github.bat
-   ```
-
-3. Следуйте инструкциям скрипта для создания репозитория и загрузки кода
-
-## 2. Развертывание в облаке
-
-#### Heroku
-```bash
-# Установите Heroku CLI
-heroku login
-
-# Создайте приложение
-heroku create your-app-name
-
-# Загрузите код
-git push heroku main
-```
-
-#### Railway
-```bash
-# Установите Railway CLI
-railway login
-
-# Инициализируйте проект
-railway init
-
-# Разверните
-railway up
-```
-
-#### Vercel
-```bash
-# Установите Vercel CLI
-npm i -g vercel
-
-# Разверните
-vercel --prod
-```
-
-## Настройка Telegram API
-
-1. Получите API ID и Hash на https://my.telegram.org
-2. Отредактируйте `config.json`:
-
-```json
-{
-    "api_id": "ВАШ_API_ID",
-    "api_hash": "ВАШ_API_HASH",
-    "phone_number": "ВАШ_НОМЕР_ТЕЛЕФОНА",
-    "group_ids": ["ID_ГРУППЫ_1", "ID_ГРУППЫ_2"],
-    "group_types": {
-        "ID_ГРУППЫ_1": "income",
-        "ID_ГРУППЫ_2": "expense"
-    }
-}
-```
-
-## Настройка групп
-
-Для получения ID групп:
-
-1. Добавьте бота @userinfobot в группу
-2. Отправьте любое сообщение в группу
-3. Бот ответит ID группы
-
-Типы групп:
-- `income` - для группы с приходами
-- `expense` - для группы с расходами
-
-## Конфигурация
-
-### Основные параметры
-
-- `api_id` - Telegram API ID
-- `api_hash` - Telegram API Hash
-- `phone_number` - Номер телефона
-- `group_ids` - ID групп для мониторинга
-- `group_types` - Сопоставление ID групп с типами операций
-- `update_interval` - Интервал обновления (секунды)
-- `currency` - Основная валюта
-
-### Параметры веб-сервера
-
-- `host` - Хост для сервера (по умолчанию: 0.0.0.0)
-- `port` - Порт для сервера (по умолчанию: 8080)
-- `debug` - Режим отладки
-
-## Использование
-
-### Главная страница
-- Отображение баланса и последних операций
-- Быстрая статистика
-- График динамики операций
-
-### Страница операций
-- Полный список всех операций
-- Фильтрация по типу и дате
-- Поиск по описанию
-- Детальный просмотр операций
-
-### Аналитика
-- Финансовая статистика за период
-- Графики доходов и расходов
-- Распределение по категориям
-- Финансовые инсайты
-
-### Настройки
-- Настройка Telegram API
-- Управление группами
-- Параметры приложения
-- Экспорт/импорт данных
-
-## Безопасность
-
-- Все данные хранятся локально
-- Используется безопасное подключение к Telegram API
-- Файлы сессий зашифрованы
-- Никакие данные не передаются на внешние серверы
-
-## Мобильный доступ
-
-Приложение полностью оптимизировано для мобильных устройств:
-
-- Адаптивный дизайн
-- Touch-friendly интерфейс
-- Быстрая навигация
-- Оптимизированные графики
-
-## API Endpoints
-
-- `GET /api/transactions` - Все транзакции
-- `GET /api/transactions/income` - Только приходы
-- `GET /api/transactions/expense` - Только расходы
-- `POST /api/settings` - Сохранение настроек
-- `GET /api/settings` - Получение настроек
-
-## Поддержка
-
-Если у вас возникли вопросы или проблемы:
-
-1. Проверьте настройки конфигурации
-2. Убедитесь в правильности API ключей
-3. Проверьте подключение к интернету
-4. Обратитесь к документации Telegram API
-
-## Лицензия
-
-MIT License
-
-## Разработка
-
-Для разработчиков:
-
-```bash
-# Установите зависимости для разработки
-pip install -r requirements-dev.txt
-
-# Запустите тесты
-pytest
-
-# Запустите линтер
-flake8
-```
+## Notes
+- This is a practical utility project, not a polished SaaS product
+- Session files, API keys, and local caches should never be committed
+- A future cleanup could split parser, backend, and UI into clearer modules
